@@ -1,0 +1,16 @@
+{
+    "dotnet.defaultSolution": "emerge.slnx",
+    "files.exclude": {
+        "**/*.meta": true,
+        "Library": true,
+        "Temp": true,
+        "obj": true
+    },
+    "search.exclude": {
+        "Library": true,
+        "Temp": true,
+        "Logs": true,
+        "Builds": true,
+        "obj": true
+    }
+}

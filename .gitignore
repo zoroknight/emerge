@@ -1,0 +1,15 @@
+# Local logs and editor files outside the Unity project.
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Credentials and local environment files.
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+
+# Unity caches and build output are excluded by emerge/.gitignore.

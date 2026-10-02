@@ -1,0 +1,155 @@
+{
+    "version": 1,
+    "name": "EmergeControls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "48650a83-fa89-41e8-a350-872f17685982",
+            "actions": [
+                {
+                    "name": "IntentW",
+                    "type": "Button",
+                    "id": "f6c94fdd-445f-4021-b696-23563437bcf8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "IntentA",
+                    "type": "Button",
+                    "id": "06cf000e-b603-45dd-a3e9-87c8142354d9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "IntentS",
+                    "type": "Button",
+                    "id": "32b456c2-2464-479c-a8d4-1be6c0c3f1d7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "IntentD",
+                    "type": "Button",
+                    "id": "168e8185-cf60-459b-a67e-ab3d2586f090",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleEditor",
+                    "type": "Button",
+                    "id": "96f98dda-1d5e-484a-9639-8d25066ad5fb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Assimilate",
+                    "type": "Button",
+                    "id": "b56a9ec9-13c1-4d68-8596-0dbcafbbb53e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "2cbc6352-7035-4543-8dd7-4d62e35dd1d5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "920c0e99-6b57-4f10-b195-6a59d51b1d9c",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "IntentW",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e8becdf8-bc41-4adc-8095-0be69c196b19",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "IntentA",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2e92bacf-809d-401e-8ce0-b4a9e026c0f7",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "IntentS",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d23bd2a6-f2b4-4efb-b0c7-531c05dd0a28",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "IntentD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a515085a-d4a6-4009-b291-3861b8237b7f",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleEditor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9107d1c6-001a-427d-b33b-b2abfc530792",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Assimilate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8582f520-aa39-491b-a699-c8a05ccf1fb3",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

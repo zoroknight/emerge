@@ -1,0 +1,23 @@
+# Emerge / 共生体
+
+20 天单人 Game Jam，主题为「涌现」。玩家通过连接、排列、旋转与控制简单细胞，让运动、摄食和生存能力从身体结构中产生。
+
+## 项目入口
+
+- [完整项目方案](参考资料/共生体-完整项目方案.md)
+- [开发计划与进度](emerge/Docs/开发计划与进度.md)
+- [Unity 工程与操作说明](emerge/README.md)
+- [环境配置记录](emerge/Docs/环境配置记录.md)
+- [Git 与 GitHub 使用约定](emerge/Docs/Git管理说明.md)
+
+## 开发环境
+
+Unity **6000.4.7f1**，URP 2D，C#，VS Code。克隆仓库后，在 Unity Hub 中添加 **emerge 子目录**，不是仓库根目录。首次打开由 Unity 恢复包依赖并生成 Library。
+
+当前已完成工程初始化和 Windows 空场景构建验证，运行时玩法尚未开始。具体状态以开发进度表为准。
+
+## 版本管理
+
+仓库同时保存 Unity 源工程、参考资料和开发记录。主分支为 `main`。Library、Temp、UserSettings、构建输出、日志与生成的 IDE 解决方案不提交；Unity 资源必须与 `.meta` 一起提交。
+
+本项目当前未指定开源许可证。远程仓库建议先设置为私有，是否公开及素材使用范围按 Game Jam 规则另行决定。
