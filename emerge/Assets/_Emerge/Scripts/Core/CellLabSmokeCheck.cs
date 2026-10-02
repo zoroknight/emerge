@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T02_CHECK_START");
+            Debug.Log("CELL_LAB_T03_CHECK_START");
             string failure = null;
             try
             {
@@ -52,6 +52,7 @@ namespace Emerge.Core
                 lab.MoveDrag(new Vector3(1000, -1000, 0));
                 Require(cell.transform.position.x < 20 && cell.transform.position.y > -6, "Drag bounds failed.");
                 lab.ResetLab();
+                CellGraphSmokeCheck.Run(lab);
                 Require(!lab.IsDragging, "Reset left active drag.");
                 var labels = lab.Panel.GetComponentsInChildren<UnityEngine.UI.Text>();
                 bool chineseTitle = false;
@@ -82,7 +83,7 @@ namespace Emerge.Core
             if (failure == null)
             {
                 var lab = FindAnyObjectByType<CellLabController>();
-                lab.SpawnCore(); lab.SpawnCilia();
+                CellGraphSmokeCheck.Preview(lab);
                 yield return new WaitForEndOfFrame();
                 string[] args = Environment.GetCommandLineArgs();
                 int screenshotArg = Array.IndexOf(args, "--cell-lab-screenshot");
@@ -91,11 +92,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T02_PASS: T01 regression, drag offset/release/bounds, rotation, mode lock/cancel, Chinese font and cleanup.");
+                    Debug.Log("CELL_LAB_T03_PASS: T01/T02 regression, Chinese UI, graph checks, reset and cleanup.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T02_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T03_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 

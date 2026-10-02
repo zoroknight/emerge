@@ -20,6 +20,9 @@ namespace Emerge.Presentation
         public Button ModeButton { get; private set; }
         private Text modeLabel;
         private Text help;
+        private Text feedback;
+        private Button disconnectButton;
+        private Button deleteButton;
 
         public void Initialize(CellLabController controller)
         {
@@ -37,7 +40,7 @@ namespace Emerge.Presentation
             bar.transform.SetParent(canvasObject.transform, false);
             var rect = bar.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0, 1); rect.anchorMax = Vector2.one;
-            rect.pivot = new Vector2(0.5f, 1); rect.sizeDelta = new Vector2(0, 120);
+            rect.pivot = new Vector2(0.5f, 1); rect.sizeDelta = new Vector2(0, 154);
             rect.anchoredPosition = Vector2.zero;
             bar.GetComponent<Image>().color = new Color(0.04f, 0.1f, 0.14f, 0.96f);
             Label(bar.transform, "细胞实验室", new Vector2(24, -8), new Vector2(230, 52), 28);
@@ -49,6 +52,11 @@ namespace Emerge.Presentation
             modeLabel = ModeButton.GetComponentInChildren<Text>();
             status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
+            feedback = Label(bar.transform, "", new Vector2(24, -112), new Vector2(750, 28), 17);
+            disconnectButton = MakeButton(bar.transform, "拆开 [X]", 800, lab.DisconnectSelected);
+            deleteButton = MakeButton(bar.transform, "删除 [Delete]", 980, lab.DeleteSelected);
+            disconnectButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(800, -108);
+            deleteButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(980, -108);
             help = Label(canvasObject.transform, "",
                 new Vector2(24, -680), new Vector2(1230, 28), 17);
             if (EventSystem.current == null)
@@ -65,11 +73,15 @@ namespace Emerge.Presentation
             status.text = (lab.IsEditing ? "编辑模式" : "游动模式") + " · 细胞：" + lab.Cells.Count + " / " + lab.Capacity;
             details.text = lab.Selected == null ? "点击细胞查看信息。" :
                 "已选：" + lab.Selected.Definition.displayName + "  |  半径：" + lab.Selected.Definition.radius.ToString("0.00") +
-                "  |  朝向：" + lab.Selected.transform.eulerAngles.z.ToString("0") + "°";
+                "  |  朝向：" + lab.Selected.transform.eulerAngles.z.ToString("0") + "°" +
+                "  |  连接：" + lab.Graph.Degree(lab.Selected) + "/" + lab.Selected.Definition.maxConnections +
+                "  |  " + (lab.Selected == lab.PrimaryCore ? "主核心" : lab.IsCoreConnected(lab.Selected) ? "核心连通" : "无核心控制");
+            feedback.text = lab.Message;
             CoreButton.interactable = CiliaButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
+            disconnectButton.interactable = deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖动细胞调整位置  |  Q / E 旋转，滚轮每次旋转 15°  |  Tab 切换模式  |  Esc 退出" :
+            help.text = lab.IsEditing ? "拖近后松开连接  |  Shift + 点击另一细胞补边  |  Q / E、滚轮旋转  |  X 拆开  |  Delete 删除  |  Tab 切换" :
                 "游动模式：布局已锁定，可点击查看细胞  |  Tab 返回编辑  |  推进与信号将在后续任务实现";
         }
 

@@ -18,12 +18,18 @@ namespace Emerge.Core
         [SerializeField] private Transform cellsRoot;
         [SerializeField] private Camera worldCamera;
         [SerializeField] private CellLabPanel panel;
+        [SerializeField] private Material connectionMaterial;
         [SerializeField, Range(2, 30)] private int capacity = 20;
 
         private readonly List<CellView> cells = new List<CellView>();
         private CellView selected;
         private CellView dragged;
         private Vector3 dragOffset;
+        private HashSet<CellView> dragGroup;
+        private bool dragMoved;
+        public CellGraph Graph { get; } = new CellGraph();
+        public CellView PrimaryCore { get; private set; }
+        public string Message { get; private set; } = "拖近其他细胞后松开即可连接。";
         public LabMode Mode { get; private set; } = LabMode.Edit;
         public bool IsEditing => Mode == LabMode.Edit;
         public bool IsDragging => dragged != null;
@@ -35,6 +41,9 @@ namespace Emerge.Core
         private void Start()
         {
             panel.Initialize(this);
+            var connections = new GameObject("连接显示").AddComponent<CellConnectionsView>();
+            connections.transform.SetParent(transform, false);
+            connections.Initialize(this, connectionMaterial);
             ResetLab();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-smoke") >= 0)
@@ -52,12 +61,19 @@ namespace Emerge.Core
         {
             if (!IsEditing || cells.Count >= capacity) return;
             int slot = cells.Count;
-            // Fixed slots keep every sample visible and separate during T01.
-            Vector3 position = new Vector3(-5.1f + slot % 5 * 2.55f, 2.8f - slot / 5 * 2.15f, 0);
+            Vector3 position = Vector3.zero;
+            bool available = false;
+            for (int i = 0; i < capacity; i++)
+            {
+                position = new Vector3(-5.1f + i % 5 * 2.55f, 2.2f - i / 5 * 2.15f, 0);
+                if (Fits(data.radius, position, null)) { available = true; break; }
+            }
+            if (!available) { SetMessage("没有空闲生成位置，请移动细胞后再添加。"); return; }
             CellView cell = Instantiate(prefab, position, Quaternion.identity, cellsRoot);
             cell.name = data.displayName + " " + (slot + 1);
             cell.Initialize(data);
             cells.Add(cell);
+            if (PrimaryCore == null && data.kind == CellKind.Core) PrimaryCore = cell;
             Select(cell);
         }
 
@@ -72,7 +88,9 @@ namespace Emerge.Core
         public void ClearLab()
         {
             if (!IsEditing) return;
-            EndDrag();
+            EndDrag(false);
+            Graph.Clear();
+            PrimaryCore = null;
             selected = null;
             foreach (CellView cell in cells)
             {
@@ -94,7 +112,7 @@ namespace Emerge.Core
 
         public void ToggleMode()
         {
-            EndDrag();
+            EndDrag(false);
             Mode = IsEditing ? LabMode.Swim : LabMode.Edit;
             panel.Refresh();
         }
@@ -105,6 +123,8 @@ namespace Emerge.Core
             Select(cell);
             dragged = cell;
             dragOffset = cell.transform.position - pointer;
+            dragGroup = Graph.Component(cell);
+            dragMoved = false;
         }
 
         public void MoveDrag(Vector3 pointer)
@@ -113,14 +133,106 @@ namespace Emerge.Core
             Vector3 position = pointer + dragOffset;
             float radius = dragged.Definition.radius;
             Vector3 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
-            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, 0.81f, -worldCamera.transform.position.z));
+            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -worldCamera.transform.position.z));
             position.x = Mathf.Clamp(position.x, min.x + radius, max.x - radius);
             position.y = Mathf.Clamp(position.y, min.y + radius, max.y - radius);
             position.z = 0;
-            dragged.transform.position = position;
+            Vector3 delta = position - dragged.transform.position;
+            if (!GroupFits(dragGroup, delta)) { SetMessage("移动被阻止：细胞不能重叠或超出操作区域。"); return; }
+            foreach (var cell in dragGroup) cell.transform.position += delta;
+            if (delta.sqrMagnitude > 0.000001f) dragMoved = true;
+            SetMessage("松开尝试圆周连接；已连接细胞整体移动。");
         }
 
-        public void EndDrag() => dragged = null;
+        public void EndDrag(bool snap = true)
+        {
+            if (dragged == null) return;
+            if (snap && dragMoved && IsEditing) SnapGroup();
+            dragged = null; dragGroup = null; dragMoved = false;
+        }
+
+        public bool IsCoreConnected(CellView cell) => cell != null && Graph.Component(PrimaryCore).Contains(cell);
+
+        public void SetMessage(string text) { Message = text; panel.Refresh(); }
+
+        public bool Connect(CellView a, CellView b)
+        {
+            if (!IsEditing) return false;
+            if (!cells.Contains(a) || !cells.Contains(b)) { SetMessage("连接对象不在当前实验室。"); return false; }
+            bool success = Graph.TryConnect(a, b, out string reason);
+            SetMessage(success ? "连接成功：圆周接触位置不限制角度。" : reason);
+            return success;
+        }
+
+        public void DisconnectSelected()
+        {
+            if (!IsEditing || selected == null) return;
+            EndDrag(false);
+            Graph.Disconnect(selected);
+            SetMessage("已拆开所选细胞，脱离主核心的部分失去控制资格。");
+        }
+
+        public void DeleteSelected()
+        {
+            if (!IsEditing || selected == null) return;
+            EndDrag(false);
+            var cell = selected;
+            Graph.Disconnect(cell); cells.Remove(cell);
+            if (cell == PrimaryCore)
+            {
+                PrimaryCore = null;
+                foreach (var other in cells) if (other.Definition.kind == CellKind.Core) { PrimaryCore = other; break; }
+            }
+            cell.gameObject.SetActive(false); Destroy(cell.gameObject);
+            selected = null;
+            SetMessage("细胞已删除；连接和核心连通状态已更新。");
+        }
+
+        private bool Fits(float radius, Vector3 position, HashSet<CellView> ignored)
+        {
+            foreach (var other in cells)
+            {
+                if (ignored != null && ignored.Contains(other)) continue;
+                if (Vector2.Distance(position, other.transform.position) < radius + other.Definition.radius - 0.01f) return false;
+            }
+            return true;
+        }
+
+        private bool GroupFits(HashSet<CellView> group, Vector3 delta)
+        {
+            Vector3 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
+            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -worldCamera.transform.position.z));
+            foreach (var cell in group)
+            {
+                Vector3 position = cell.transform.position + delta;
+                float r = cell.Definition.radius;
+                if (position.x < min.x + r || position.x > max.x - r || position.y < min.y + r || position.y > max.y - r) return false;
+                if (!Fits(r, position, group)) return false;
+            }
+            return true;
+        }
+
+        private void SnapGroup()
+        {
+            CellView from = null, to = null;
+            float closest = 0.45f;
+            foreach (var member in dragGroup)
+                foreach (var other in cells)
+                {
+                    if (dragGroup.Contains(other)) continue;
+                    float gap = Mathf.Abs(Vector2.Distance(member.transform.position, other.transform.position) - member.Definition.radius - other.Definition.radius);
+                    if (gap < closest) { closest = gap; from = member; to = other; }
+                }
+            if (from == null) { SetMessage("位置已保存；靠近圆周接触处可连接。"); return; }
+            if (Graph.Degree(from) >= from.Definition.maxConnections || Graph.Degree(to) >= to.Definition.maxConnections)
+            { SetMessage("连接数量已达上限，未吸附。"); return; }
+            Vector3 direction = (from.transform.position - to.transform.position).normalized;
+            Vector3 target = to.transform.position + direction * (from.Definition.radius + to.Definition.radius);
+            Vector3 delta = target - from.transform.position;
+            if (!GroupFits(dragGroup, delta)) { SetMessage("吸附被阻止：会造成重叠或超出操作区域。"); return; }
+            foreach (var cell in dragGroup) cell.transform.position += delta;
+            Connect(from, to);
+        }
 
         public void RotateSelected(float degrees)
         {
@@ -129,8 +241,8 @@ namespace Emerge.Core
             panel.Refresh();
         }
 
-        private void OnApplicationFocus(bool focused) { if (!focused) EndDrag(); }
-        private void OnDisable() => EndDrag();
+        private void OnApplicationFocus(bool focused) { if (!focused) EndDrag(false); }
+        private void OnDisable() => EndDrag(false);
 
         private void Update()
         {
@@ -141,6 +253,8 @@ namespace Emerge.Core
                 if (keyboard.digit1Key.wasPressedThisFrame) SpawnCore();
                 if (keyboard.digit2Key.wasPressedThisFrame) SpawnCilia();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
+                if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
+                if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();
                 if (keyboard.escapeKey.wasPressedThisFrame && !Application.isEditor) Application.Quit();
                 float direction = (keyboard.eKey.isPressed ? 1 : 0) - (keyboard.qKey.isPressed ? 1 : 0);
                 if (direction != 0) RotateSelected(-direction * 90f * Time.deltaTime);
@@ -157,6 +271,8 @@ namespace Emerge.Core
             for (int i = cells.Count - 1; i >= 0; i--)
                 if (Vector2.Distance(pointer, cells[i].transform.position) <= cells[i].Definition.radius)
                 { hit = cells[i]; break; }
+            if (keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed))
+            { Connect(selected, hit); return; }
             Select(hit);
             BeginDrag(hit, pointer);
         }

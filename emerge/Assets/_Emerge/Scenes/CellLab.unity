@@ -306,6 +306,7 @@ MonoBehaviour:
   cellsRoot: {fileID: 1892439732}
   worldCamera: {fileID: 519420031}
   panel: {fileID: 549435914}
+  connectionMaterial: {fileID: 2100000, guid: f3fd77126cbddab45a833206a17fed77, type: 2}
   capacity: 20
 --- !u!4 &549435916
 Transform:

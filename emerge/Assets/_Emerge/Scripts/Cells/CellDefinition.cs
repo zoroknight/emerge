@@ -11,5 +11,6 @@ namespace Emerge.Cells
         public string displayName;
         [Min(0.1f)] public float radius = 0.7f;
         public Color bodyColor = Color.cyan;
+        [Min(1)] public int maxConnections = 4;
     }
 }

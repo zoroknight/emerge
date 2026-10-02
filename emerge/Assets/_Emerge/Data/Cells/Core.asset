@@ -16,3 +16,4 @@ MonoBehaviour:
   displayName: "\u6838\u5FC3\u7EC6\u80DE"
   radius: 0.72
   bodyColor: {r: 0.38, g: 0.83, b: 0.82, a: 1}
+  maxConnections: 6
