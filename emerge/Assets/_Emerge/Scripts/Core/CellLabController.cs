@@ -37,6 +37,7 @@ namespace Emerge.Core
         public IReadOnlyList<CellView> Cells => cells;
         public int Capacity => capacity;
         public CellView Selected => selected;
+        public CellConnection SelectedConnection { get; private set; }
         public CellLabPanel Panel => panel;
         public CellLabPhysics Physics { get; private set; }
         public CellDefinition CoreDefinition => core;
@@ -136,6 +137,7 @@ namespace Emerge.Core
             Graph.Clear();
             PrimaryCore = null;
             selected = null;
+            SelectedConnection = null;
             foreach (CellView cell in cells)
             {
                 // Destroy is deferred; hide samples immediately before respawning.
@@ -150,8 +152,39 @@ namespace Emerge.Core
         {
             if (selected != null) selected.SetSelected(false);
             selected = cell;
+            SelectedConnection = null;
             if (selected != null) selected.SetSelected(true);
             panel.Refresh();
+        }
+
+        public void SelectConnection(CellConnection edge)
+        {
+            Select(null);
+            if (edge != null && !ContainsConnection(edge)) return;
+            SelectedConnection = edge;
+            SetMessage("配置当前连接线路。");
+        }
+
+        private bool ContainsConnection(CellConnection edge)
+        { foreach (var item in Graph.Edges) if (item == edge) return true; return false; }
+
+        public void ToggleSignalChannel(int channel)
+        {
+            if (!IsEditing || channel < 0 || channel > 3) return;
+            if (SelectedConnection != null && ContainsConnection(SelectedConnection))
+                Graph.Configure(SelectedConnection, SelectedConnection.ChannelMask ^ (1 << channel), SelectedConnection.Efficiency);
+            else if (selected != null && selected.Definition.kind == CellKind.Cilia)
+                selected.SetResponseMask(selected.ResponseMask ^ (1 << channel));
+            else return;
+            SetMessage("通道配置已更新。");
+        }
+
+        public void CycleSignalEfficiency()
+        {
+            if (!IsEditing || SelectedConnection == null || !ContainsConnection(SelectedConnection)) return;
+            float value = SelectedConnection.Efficiency;
+            Graph.Configure(SelectedConnection, SelectedConnection.ChannelMask, value > 0.95f ? 0.75f : value > 0.6f ? 0.5f : 1f);
+            SetMessage("连接效率已更新。");
         }
 
         public void ToggleMode()
@@ -166,7 +199,7 @@ namespace Emerge.Core
         {
             if (!IsEditing || selected == null || selected.Definition.kind != CellKind.Cilia) return;
             selected.SetChannel((IntentChannel)(((int)selected.Channel + 1) % 4));
-            SetMessage("纤毛响应通道已改为 " + selected.Channel + "；按键含义由朝向和布局决定。");
+            SetMessage("已设为单通道 " + selected.Channel + "。");
         }
 
         public void BeginDrag(CellView cell, Vector3 pointer)
@@ -218,8 +251,13 @@ namespace Emerge.Core
 
         public void DisconnectSelected()
         {
-            if (!IsEditing || selected == null) return;
+            if (!IsEditing || (selected == null && SelectedConnection == null)) return;
             EndDrag(false);
+            if (SelectedConnection != null)
+            {
+                Graph.Remove(SelectedConnection); SelectedConnection = null;
+                SetMessage("连接已拆开，机械连接与信号线路同时移除。"); return;
+            }
             Graph.Disconnect(selected);
             SetMessage("已拆开所选细胞，脱离主核心的部分失去控制资格。");
         }
@@ -327,6 +365,18 @@ namespace Emerge.Core
                 { hit = cells[i]; break; }
             if (keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed))
             { Connect(selected, hit); return; }
+            {
+                CellConnection nearest = null; float distance = 0.18f;
+                foreach (var edge in Graph.Edges)
+                {
+                    Vector2 a = edge.A.transform.position, b = edge.B.transform.position;
+                    Vector2 segment = b - a;
+                    float t = segment.sqrMagnitude > 0 ? Mathf.Clamp(Vector2.Dot((Vector2)pointer - a, segment) / segment.sqrMagnitude, 0.42f, 0.58f) : 0;
+                    float d = Vector2.Distance(pointer, a + segment * t);
+                    if (d < distance) { nearest = edge; distance = d; }
+                }
+                if (nearest != null) { SelectConnection(nearest); return; }
+            }
             Select(hit);
             BeginDrag(hit, pointer);
         }

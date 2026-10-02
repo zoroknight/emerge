@@ -15,5 +15,6 @@ namespace Emerge.Cells
         [Min(1)] public int maxConnections = 4;
         [Min(0.1f)] public float mass = 1f;
         [Min(0)] public float thrust = 3.5f;
+        [Range(0, 1)] public float signalRetention = 0.9f;
     }
 }

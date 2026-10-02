@@ -7,6 +7,10 @@ namespace Emerge.Cells
     {
         public CellView A { get; }
         public CellView B { get; }
+        public int ChannelMask { get; private set; } = 1;
+        public float Efficiency { get; private set; } = 1f;
+        internal void Configure(int mask, float efficiency)
+        { ChannelMask = mask & 15; Efficiency = Mathf.Clamp01(efficiency); }
         public CellConnection(CellView a, CellView b) { A = a; B = b; }
         public bool Contains(CellView cell) => A == cell || B == cell;
     }
@@ -16,6 +20,13 @@ namespace Emerge.Cells
     {
         private readonly List<CellConnection> edges = new List<CellConnection>();
         public IReadOnlyList<CellConnection> Edges => edges;
+        public int Revision { get; private set; }
+
+        public bool Configure(CellConnection edge, int mask, float efficiency)
+        {
+            if (edge == null || !edges.Contains(edge) || float.IsNaN(efficiency) || float.IsInfinity(efficiency)) return false;
+            edge.Configure(mask, efficiency); Revision++; return true;
+        }
 
         public int Degree(CellView cell)
         {
@@ -61,11 +72,12 @@ namespace Emerge.Cells
             if (distance < expected - 0.01f) { reason = "细胞重叠，无法连接。"; return false; }
             if (distance > expected + 0.06f) { reason = "细胞太远，请拖到圆周接触处。"; return false; }
             edges.Add(new CellConnection(a, b));
+            Revision++;
             return true;
         }
 
-        public bool Remove(CellConnection edge) => edges.Remove(edge);
-        public void Disconnect(CellView cell) => edges.RemoveAll(edge => edge.Contains(cell));
-        public void Clear() => edges.Clear();
+        public bool Remove(CellConnection edge) { bool removed = edges.Remove(edge); if (removed) Revision++; return removed; }
+        public void Disconnect(CellView cell) { if (edges.RemoveAll(edge => edge.Contains(cell)) > 0) Revision++; }
+        public void Clear() { edges.Clear(); Revision++; }
     }
 }

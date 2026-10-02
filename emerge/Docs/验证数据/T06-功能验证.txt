@@ -1,0 +1,112 @@
+Mono path[0] = 'E:/gamejam/gamejam_1/emerge/Builds/Windows/Emerge_Data/Managed'
+Mono config path = 'E:/gamejam/gamejam_1/emerge/Builds/Windows/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Found 1 interfaces on host : 0) 192.168.1.101
+Player connection [53172]  Target information:
+
+Player connection [53172]  * "[IP] 192.168.1.101 [Port] 55000 [Flags] 2 [Guid] 2595096267 [EditorId] 3418161125 [Version] 1048832 [Id] WindowsPlayer(2,LAPTOP-V9ORJ8QI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Emerge"
+
+Player connection [53172] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.4.7f1 (f3c3c4248748)
+[Subsystems] Discovering subsystems at path E:/gamejam/gamejam_1/emerge/Builds/Windows/Emerge_Data/UnitySubsystems
+[D3D12 Device Filter] Vendor Name: NVIDIA
+[D3D12 Device Filter] Device Name: NVIDIA GeForce RTX 5060 Laptop GPU
+[D3D12 Device Filter] Driver Version: 32.0.15.8205
+[D3D12 Device Filter] Feature Level: 12.2
+[D3D12 Device Filter] Graphics Memory: 7810 MB
+[D3D12 Device Filter] Processor Count: 32
+[D3D12 Device Filter] Device Type: Discrete
+GfxDevice: creating device client; kGfxThreadingModeSplitJobs
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 5060 Laptop GPU (ID=0x2d59)
+    Vendor:          NVIDIA
+    VRAM:            7810 MB
+    App VRAM Budget: 7042 MB
+    Driver:          32.0.15.8205
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.002 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+
+Using Windows.Gaming.Input
+UnloadTime: 0.572300 ms
+CELL_LAB_T06_CHECK_START
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:17)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T03_GRAPH_PASS: free-angle snap, group drag, overlap/duplicate/self/distance/degree guards, chain, cycle, bridge deletion and core control.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellGraphSmokeCheck:Run (Emerge.Core.CellLabController) (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellGraphSmokeCheck.cs:75)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:55)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T04_PHYSICS_PASS: straight_core_dx=0.093; offset_core_angle=-9.21; rotated_core_dy=-0.093; input actions W/A, simultaneous channels, release damping, disconnected control and mode cleanup passed.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellPhysicsSmokeCheck/<Run>d__7:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellPhysicsSmokeCheck.cs:118)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T06_SIGNAL_PASS: 0.9/0.81 attenuation, edge efficiency, route UI and swim locks, W/A/S/D individually, max-not-sum actuation, response off, circuit breaks, cache invalidation, strongest ring path, lossless cycle termination and source deletion.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellSignalSmokeCheck/<Run>d__7:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellSignalSmokeCheck.cs:126)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T06_PASS: T01-T05 baseline regression, routed signals, input-driven physics and cleanup.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:107)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+PlayerConnection::Cleanup##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1790933013540,"processId":17384,"allocatedMemory":71386,"memoryLabels":[{"Default":5256},{"Thread":7424},{"Manager":17015},{"Shader":8},{"GfxDevice":2704},{"GfxThread":792},{"Audio":752},{"Serialization":520},{"Input":2440},{"JobScheduler":32768},{"String":495},{"PoolAlloc":192},{"CloudService":144},{"VR":1928},{"Video":144},{"NativeArray":372},{"Subsystems":96},{"CoreBusinessMetrics":120}]}

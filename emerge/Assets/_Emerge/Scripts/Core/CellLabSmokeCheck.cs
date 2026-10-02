@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T04_CHECK_START");
+            Debug.Log("CELL_LAB_T06_CHECK_START");
             string failure = null;
             try
             {
@@ -80,6 +80,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return CellSignalSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellSignalSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -89,6 +95,7 @@ namespace Emerge.Core
             {
                 var lab = FindAnyObjectByType<CellLabController>();
                 CellGraphSmokeCheck.Preview(lab);
+                lab.SelectConnection(lab.Graph.Edges[0]);
                 yield return new WaitForEndOfFrame();
                 string[] args = Environment.GetCommandLineArgs();
                 int screenshotArg = Array.IndexOf(args, "--cell-lab-screenshot");
@@ -97,11 +104,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T04_PASS: T01/T02/T03 regression, input-driven physics and cleanup.");
+                    Debug.Log("CELL_LAB_T06_PASS: T01-T05 baseline regression, routed signals, input-driven physics and cleanup.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T04_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T06_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 

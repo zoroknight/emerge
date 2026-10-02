@@ -75,6 +75,7 @@ namespace Emerge.Core
                 if (Failure != null) yield break;
 
                 Pair(lab, new Vector3(1.3f, 0, 0), 180); lab.CycleChannel();
+                lab.Graph.Configure(lab.Graph.Edges[0], 2, 1);
                 Require(lab.Selected.Channel == IntentChannel.A, "Channel assignment failed.");
                 lab.ToggleMode(); lab.CycleChannel();
                 Require(lab.Selected.Channel == IntentChannel.A, "Swim allowed channel editing.");
@@ -83,10 +84,10 @@ namespace Emerge.Core
                 Require(lab.Selected.Activation == 0 && lab.Cells[0].Body.position.magnitude < 0.01f, "Wrong channel activated cilia.");
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.A));
                 yield return null; yield return Steps(15);
-                Require(lab.Cells[0].Body.position.x > 0.025f && lab.Selected.Activation == 1, "Assigned channel A did not drive cilia.");
+                Require(lab.Cells[0].Body.position.x > 0.025f && Mathf.Abs(lab.Selected.Activation - lab.CiliaDefinition.signalRetention) < 0.001f, "Assigned channel A did not drive cilia.");
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W, Key.A, Key.S, Key.D));
                 yield return null; yield return Steps(5);
-                Require(lab.Physics.ActiveMask == 15 && Mathf.Abs(lab.Selected.LastForce.magnitude - lab.Selected.Definition.thrust) < 0.01f,
+                Require(lab.Physics.ActiveMask == 15 && Mathf.Abs(lab.Selected.LastForce.magnitude - lab.Selected.Definition.thrust * lab.CiliaDefinition.signalRetention) < 0.01f,
                     "Simultaneous input increased actuator strength.");
                 lab.ToggleMode();
                 Vector2 editedPosition = lab.Cells[0].Body.position;

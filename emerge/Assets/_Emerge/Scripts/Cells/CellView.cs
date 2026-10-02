@@ -12,6 +12,7 @@ namespace Emerge.Cells
 
         public CellDefinition Definition => definition;
         public IntentChannel Channel => channel;
+        public int ResponseMask { get; private set; } = 1;
         public Rigidbody2D Body { get; private set; }
         public Vector2 LastForce { get; private set; }
         public float Activation { get; private set; }
@@ -20,6 +21,7 @@ namespace Emerge.Cells
         public void Initialize(CellDefinition data)
         {
             definition = data;
+            ResponseMask = 1 << (int)channel;
             if (applyDefinitionTint) body.color = data.bodyColor;
             transform.localScale = Vector3.one * data.radius * 2f;
             Body = GetComponent<Rigidbody2D>();
@@ -39,7 +41,8 @@ namespace Emerge.Cells
             SetSelected(false);
         }
 
-        public void SetChannel(IntentChannel value) => channel = value;
+        public void SetChannel(IntentChannel value) { channel = value; ResponseMask = 1 << (int)value; }
+        public void SetResponseMask(int mask) => ResponseMask = mask & 15;
 
         public void ApplyThrust(float activation)
         {

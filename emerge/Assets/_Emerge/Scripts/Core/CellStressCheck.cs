@@ -46,6 +46,7 @@ namespace Emerge.Core
         public int ramMb, velocityIterations, positionIterations;
         public float timestep, coreRadius, ciliaRadius, coreMass, ciliaMass, thrust;
         public float jointFrequency;
+        public float coreSignalRetention, ciliaSignalRetention;
         public float maxAllowedAnchorError = 0.25f, maxAllowedPenetration = 0.06f, maxAllowedSpeed = 16f, maxAllowedAngularSpeed = 720f;
         public float recoveryAnchorLimit = 0.03f, recoverySpeedLimit = 0.15f, recoveryAngularLimit = 3f;
         public double simulateP95BudgetMs = 4;
@@ -83,6 +84,7 @@ namespace Emerge.Core
             report.coreRadius = lab.CoreDefinition.radius; report.ciliaRadius = lab.CiliaDefinition.radius;
             report.coreMass = lab.CoreDefinition.mass; report.ciliaMass = lab.CiliaDefinition.mass; report.thrust = lab.CiliaDefinition.thrust;
             report.jointFrequency = CellLabPhysics.JointFrequency;
+            report.coreSignalRetention = lab.CoreDefinition.signalRetention; report.ciliaSignalRetention = lab.CiliaDefinition.signalRetention;
             Application.logMessageReceived += OnLog;
             Debug.Log("CELL_STRESS_T05_START: thresholds fixed before execution; 6 fixtures, 67 simulated seconds each.");
             yield return CellPhysicsSmokeCheck.Run(lab);

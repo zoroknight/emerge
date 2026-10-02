@@ -19,3 +19,4 @@ MonoBehaviour:
   maxConnections: 6
   mass: 1.4
   thrust: 0
+  signalRetention: 0.9
