@@ -7,13 +7,14 @@ namespace Emerge.Cells
         [SerializeField] private SpriteRenderer body;
         [SerializeField] private GameObject selection;
         [SerializeField] private CellDefinition definition;
+        [SerializeField] private bool applyDefinitionTint = true;
 
         public CellDefinition Definition => definition;
 
         public void Initialize(CellDefinition data)
         {
             definition = data;
-            body.color = data.bodyColor;
+            if (applyDefinitionTint) body.color = data.bodyColor;
             transform.localScale = Vector3.one * data.radius * 2f;
             SetSelected(false);
         }

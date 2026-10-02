@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd9b3a9bd036aa443baa979441e1a977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Emerge.Presentation.CellLabPanel
+  chineseFont: {fileID: 12800000, guid: 40ce99cab6033eb4fafbd93cd50ab520, type: 3}
 --- !u!114 &549435915
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T01_CHECK_START");
+            Debug.Log("CELL_LAB_T02_CHECK_START");
             string failure = null;
             try
             {
@@ -26,6 +26,42 @@ namespace Emerge.Core
                 Require(lab.Cells.Count == 4, "Spawn button wiring failed.");
                 lab.Select(lab.Cells[0]);
                 Require(lab.Selected == lab.Cells[0], "Selection failed.");
+                var cell = lab.Selected;
+                Vector3 initial = cell.transform.position;
+                Vector3 grab = initial + new Vector3(0.2f, 0.1f, 0);
+                lab.BeginDrag(cell, grab);
+                lab.MoveDrag(grab + new Vector3(1, -1, 0));
+                Require(Vector3.Distance(cell.transform.position, initial + new Vector3(1, -1, 0)) < 0.001f, "Drag offset failed.");
+                lab.EndDrag();
+                var released = cell.transform.position;
+                lab.MoveDrag(Vector3.zero);
+                Require(cell.transform.position == released && !lab.IsDragging, "Drag release failed.");
+                lab.RotateSelected(90);
+                Require(Mathf.Abs(Mathf.DeltaAngle(cell.transform.eulerAngles.z, 90)) < 0.01f, "Rotation failed.");
+                lab.BeginDrag(cell, cell.transform.position);
+                lab.Panel.ModeButton.onClick.Invoke();
+                Require(!lab.IsEditing && !lab.IsDragging, "Mode switch left active drag.");
+                lab.MoveDrag(Vector3.zero); lab.BeginDrag(cell, Vector3.zero); lab.RotateSelected(45);
+                lab.SpawnCore(); lab.ResetLab(); lab.ClearLab();
+                Require(cell.transform.position == released && Mathf.Abs(Mathf.DeltaAngle(cell.transform.eulerAngles.z, 90)) < 0.01f && lab.Cells.Count == 4 && !lab.IsDragging,
+                    "Swim mode allowed layout edits.");
+                Require(!lab.Panel.CoreButton.interactable && !lab.Panel.ResetButton.interactable && !lab.Panel.ClearButton.interactable, "Swim UI lock failed.");
+                lab.Panel.ModeButton.onClick.Invoke();
+                Require(lab.IsEditing && lab.Panel.ResetButton.interactable && cell.transform.position == released, "Return to edit changed layout.");
+                lab.BeginDrag(cell, cell.transform.position);
+                lab.MoveDrag(new Vector3(1000, -1000, 0));
+                Require(cell.transform.position.x < 20 && cell.transform.position.y > -6, "Drag bounds failed.");
+                lab.ResetLab();
+                Require(!lab.IsDragging, "Reset left active drag.");
+                var labels = lab.Panel.GetComponentsInChildren<UnityEngine.UI.Text>();
+                bool chineseTitle = false;
+                foreach (var label in labels)
+                {
+                    if (label.text == "细胞实验室") chineseTitle = true;
+                    foreach (char glyph in label.text)
+                        if (glyph > 127 && !char.IsWhiteSpace(glyph)) Require(label.font.HasCharacter(glyph), "Missing Chinese glyph: " + glyph);
+                }
+                Require(chineseTitle && lab.Cells[0].Definition.displayName == "核心细胞", "Chinese localization failed.");
                 for (int i = 0; i < 3; i++) lab.Panel.ResetButton.onClick.Invoke();
                 Require(lab.Cells.Count == 2, "Repeated reset failed.");
                 lab.Panel.ClearButton.onClick.Invoke();
@@ -55,11 +91,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T01_PASS: spawn, selection, reset, clear, capacity and cleanup.");
+                    Debug.Log("CELL_LAB_T02_PASS: T01 regression, drag offset/release/bounds, rotation, mode lock/cancel, Chinese font and cleanup.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T01_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T02_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 

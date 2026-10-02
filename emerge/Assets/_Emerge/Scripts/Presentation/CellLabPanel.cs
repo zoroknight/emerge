@@ -8,6 +8,7 @@ namespace Emerge.Presentation
 {
     public sealed class CellLabPanel : MonoBehaviour
     {
+        [SerializeField] private Font chineseFont;
         private CellLabController lab;
         private Text status;
         private Text details;
@@ -16,11 +17,15 @@ namespace Emerge.Presentation
         public Button CiliaButton { get; private set; }
         public Button ResetButton { get; private set; }
         public Button ClearButton { get; private set; }
+        public Button ModeButton { get; private set; }
+        private Text modeLabel;
+        private Text help;
 
         public void Initialize(CellLabController controller)
         {
             lab = controller;
-            font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            font = chineseFont;
+            if (font == null) throw new System.InvalidOperationException("实验室未配置中文字体，请检查 CellLabPanel 的字体引用。");
             var canvasObject = new GameObject("Lab UI", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvasObject.transform.SetParent(transform, false);
             canvasObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
@@ -35,14 +40,16 @@ namespace Emerge.Presentation
             rect.pivot = new Vector2(0.5f, 1); rect.sizeDelta = new Vector2(0, 120);
             rect.anchoredPosition = Vector2.zero;
             bar.GetComponent<Image>().color = new Color(0.04f, 0.1f, 0.14f, 0.96f);
-            Label(bar.transform, "CELL LAB", new Vector2(24, -16), new Vector2(230, 36), 28);
-            CoreButton = MakeButton(bar.transform, "Add core  [1]", 280, lab.SpawnCore);
-            CiliaButton = MakeButton(bar.transform, "Add cilia  [2]", 460, lab.SpawnCilia);
-            ResetButton = MakeButton(bar.transform, "Reset  [Backspace]", 640, lab.ResetLab);
-            ClearButton = MakeButton(bar.transform, "Clear", 840, lab.ClearLab);
+            Label(bar.transform, "细胞实验室", new Vector2(24, -8), new Vector2(230, 52), 28);
+            CoreButton = MakeButton(bar.transform, "添加核心 [1]", 260, lab.SpawnCore);
+            CiliaButton = MakeButton(bar.transform, "添加纤毛 [2]", 440, lab.SpawnCilia);
+            ResetButton = MakeButton(bar.transform, "重置 [退格]", 620, lab.ResetLab);
+            ClearButton = MakeButton(bar.transform, "清空", 800, lab.ClearLab);
+            ModeButton = MakeButton(bar.transform, "", 980, lab.ToggleMode);
+            modeLabel = ModeButton.GetComponentInChildren<Text>();
             status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
-            Label(canvasObject.transform, "Click a cell to inspect  |  Core: glowing center  |  Cilia: three soft tails  |  Esc: quit",
+            help = Label(canvasObject.transform, "",
                 new Vector2(24, -680), new Vector2(1230, 28), 17);
             if (EventSystem.current == null)
             {
@@ -55,10 +62,15 @@ namespace Emerge.Presentation
         public void Refresh()
         {
             if (status == null) return;
-            status.text = "Samples: " + lab.Cells.Count + " / " + lab.Capacity;
-            details.text = lab.Selected == null ? "Select a sample to inspect." :
-                "Selected: " + lab.Selected.Definition.displayName + "   |   Radius: " + lab.Selected.Definition.radius.ToString("0.00");
-            CoreButton.interactable = CiliaButton.interactable = lab.Cells.Count < lab.Capacity;
+            status.text = (lab.IsEditing ? "编辑模式" : "游动模式") + " · 细胞：" + lab.Cells.Count + " / " + lab.Capacity;
+            details.text = lab.Selected == null ? "点击细胞查看信息。" :
+                "已选：" + lab.Selected.Definition.displayName + "  |  半径：" + lab.Selected.Definition.radius.ToString("0.00") +
+                "  |  朝向：" + lab.Selected.transform.eulerAngles.z.ToString("0") + "°";
+            CoreButton.interactable = CiliaButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
+            ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
+            modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
+            help.text = lab.IsEditing ? "拖动细胞调整位置  |  Q / E 旋转，滚轮每次旋转 15°  |  Tab 切换模式  |  Esc 退出" :
+                "游动模式：布局已锁定，可点击查看细胞  |  Tab 返回编辑  |  推进与信号将在后续任务实现";
         }
 
         private Text Label(Transform parent, string value, Vector2 position, Vector2 size, int fontSize)

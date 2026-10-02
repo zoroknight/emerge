@@ -45,6 +45,11 @@ namespace Emerge.Editor
             if (lab == null) lab = new GameObject("CellLab").AddComponent<CellLabController>();
             var panel = lab.GetComponent<CellLabPanel>();
             if (panel == null) panel = lab.gameObject.AddComponent<CellLabPanel>();
+            var panelSettings = new SerializedObject(panel);
+            var font = AssetDatabase.LoadAssetAtPath<Font>(Root + "Art/Fonts/NotoSansCJKsc-Regular.otf");
+            if (font == null) throw new System.InvalidOperationException("Chinese font missing.");
+            panelSettings.FindProperty("chineseFont").objectReferenceValue = font;
+            panelSettings.ApplyModifiedPropertiesWithoutUndo();
             var settings = new SerializedObject(lab);
             settings.FindProperty("core").objectReferenceValue = core;
             settings.FindProperty("cilia").objectReferenceValue = cilia;
@@ -71,9 +76,14 @@ namespace Emerge.Editor
         {
             string path = Root + "Data/Cells/" + name + ".asset";
             var data = AssetDatabase.LoadAssetAtPath<CellDefinition>(path);
-            if (data != null) return data;
+            if (data != null)
+            {
+                data.displayName = kind == CellKind.Core ? "核心细胞" : "纤毛细胞";
+                EditorUtility.SetDirty(data);
+                return data;
+            }
             data = ScriptableObject.CreateInstance<CellDefinition>();
-            data.kind = kind; data.displayName = name; data.radius = radius; data.bodyColor = color;
+            data.kind = kind; data.displayName = kind == CellKind.Core ? "核心细胞" : "纤毛细胞"; data.radius = radius; data.bodyColor = color;
             AssetDatabase.CreateAsset(data, path);
             return data;
         }
@@ -113,7 +123,7 @@ namespace Emerge.Editor
 
         private static CellView Prefab(CellDefinition definition, Sprite circle, Sprite ring, Sprite star, Material material)
         {
-            string path = Root + "Prefabs/Cells/" + definition.displayName + "Cell.prefab";
+            string path = Root + "Prefabs/Cells/" + definition.kind + "Cell.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null) return existing.GetComponent<CellView>();
             var obj = new GameObject(definition.displayName + "Cell");
