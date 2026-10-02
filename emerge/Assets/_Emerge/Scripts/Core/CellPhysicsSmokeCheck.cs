@@ -74,11 +74,12 @@ namespace Emerge.Core
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState()); yield return null;
                 if (Failure != null) yield break;
 
-                Pair(lab, new Vector3(1.3f, 0, 0), 180); lab.CycleChannel();
-                lab.Graph.Configure(lab.Graph.Edges[0], 2, 1);
-                Require(lab.Selected.Channel == IntentChannel.A, "Channel assignment failed.");
-                lab.ToggleMode(); lab.CycleChannel();
-                Require(lab.Selected.Channel == IntentChannel.A, "Swim allowed channel editing.");
+                Pair(lab, new Vector3(1.3f, 0, 0), 180);
+                lab.SelectConnection(lab.Graph.Edges[0]); lab.SetCoreChannel(1);
+                Require(lab.Graph.Edges[0].CoreChannel == IntentChannel.A, "Core exit assignment failed.");
+                lab.ToggleMode(); lab.SetCoreChannel(0);
+                Require(lab.Graph.Edges[0].CoreChannel == IntentChannel.A, "Swim allowed channel editing.");
+                lab.Select(lab.Cells[1]);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W));
                 yield return null; yield return Steps(15);
                 Require(lab.Selected.Activation == 0 && lab.Cells[0].Body.position.magnitude < 0.01f, "Wrong channel activated cilia.");

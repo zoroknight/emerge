@@ -7,10 +7,8 @@ namespace Emerge.Cells
     {
         public CellView A { get; }
         public CellView B { get; }
-        public int ChannelMask { get; private set; } = 1;
-        public float Efficiency { get; private set; } = 1f;
-        internal void Configure(int mask, float efficiency)
-        { ChannelMask = mask & 15; Efficiency = Mathf.Clamp01(efficiency); }
+        public IntentChannel CoreChannel { get; private set; } = IntentChannel.W;
+        internal void Configure(IntentChannel channel) => CoreChannel = channel;
         public CellConnection(CellView a, CellView b) { A = a; B = b; }
         public bool Contains(CellView cell) => A == cell || B == cell;
     }
@@ -22,10 +20,11 @@ namespace Emerge.Cells
         public IReadOnlyList<CellConnection> Edges => edges;
         public int Revision { get; private set; }
 
-        public bool Configure(CellConnection edge, int mask, float efficiency)
+        public bool ConfigureCoreChannel(CellConnection edge, CellView source, IntentChannel channel)
         {
-            if (edge == null || !edges.Contains(edge) || float.IsNaN(efficiency) || float.IsInfinity(efficiency)) return false;
-            edge.Configure(mask, efficiency); Revision++; return true;
+            if (edge == null || !edges.Contains(edge) || source == null || source.Definition.kind != CellKind.Core ||
+                !edge.Contains(source) || (int)channel < 0 || (int)channel > 3) return false;
+            edge.Configure(channel); Revision++; return true;
         }
 
         public int Degree(CellView cell)

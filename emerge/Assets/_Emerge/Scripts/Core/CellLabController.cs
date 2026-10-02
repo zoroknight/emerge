@@ -162,29 +162,31 @@ namespace Emerge.Core
             Select(null);
             if (edge != null && !ContainsConnection(edge)) return;
             SelectedConnection = edge;
-            SetMessage("配置当前连接线路。");
+            SetMessage(IsCoreExit(edge) ? "选择核心出口的信号。" : "自动跟随上游信号。");
         }
 
         private bool ContainsConnection(CellConnection edge)
         { foreach (var item in Graph.Edges) if (item == edge) return true; return false; }
 
-        public void ToggleSignalChannel(int channel)
+        public bool IsCoreExit(CellConnection edge) => edge != null && edge.Contains(PrimaryCore);
+
+        public void SetCoreChannel(int channel)
         {
-            if (!IsEditing || channel < 0 || channel > 3) return;
-            if (SelectedConnection != null && ContainsConnection(SelectedConnection))
-                Graph.Configure(SelectedConnection, SelectedConnection.ChannelMask ^ (1 << channel), SelectedConnection.Efficiency);
-            else if (selected != null && selected.Definition.kind == CellKind.Cilia)
-                selected.SetResponseMask(selected.ResponseMask ^ (1 << channel));
-            else return;
-            SetMessage("通道配置已更新。");
+            if (!IsEditing || channel < 0 || channel > 3 || !IsCoreExit(SelectedConnection)) return;
+            if (Graph.ConfigureCoreChannel(SelectedConnection, PrimaryCore, (IntentChannel)channel))
+                SetMessage("核心出口已设为 " + (IntentChannel)channel + "。");
         }
 
-        public void CycleSignalEfficiency()
+        public int ConnectionChannels(CellConnection edge)
         {
-            if (!IsEditing || SelectedConnection == null || !ContainsConnection(SelectedConnection)) return;
-            float value = SelectedConnection.Efficiency;
-            Graph.Configure(SelectedConnection, SelectedConnection.ChannelMask, value > 0.95f ? 0.75f : value > 0.6f ? 0.5f : 1f);
-            SetMessage("连接效率已更新。");
+            if (edge == null || Physics == null) return 0;
+            if (IsCoreExit(edge)) return 1 << (int)edge.CoreChannel;
+            Physics.Signals.Refresh(Graph, cells, PrimaryCore);
+            int mask = 0;
+            for (int c = 0; c < 4; c++)
+                if (Mathf.Min(Physics.Signals.Strength(PrimaryCore, edge.A, c), Physics.Signals.Strength(PrimaryCore, edge.B, c)) > 0)
+                    mask |= 1 << c;
+            return mask;
         }
 
         public void ToggleMode()
@@ -193,13 +195,6 @@ namespace Emerge.Core
             Mode = IsEditing ? LabMode.Swim : LabMode.Edit;
             if (IsEditing) Physics.StopSimulation(); else Physics.StartSimulation();
             panel.Refresh();
-        }
-
-        public void CycleChannel()
-        {
-            if (!IsEditing || selected == null || selected.Definition.kind != CellKind.Cilia) return;
-            selected.SetChannel((IntentChannel)(((int)selected.Channel + 1) % 4));
-            SetMessage("已设为单通道 " + selected.Channel + "。");
         }
 
         public void BeginDrag(CellView cell, Vector3 pointer)
@@ -345,7 +340,6 @@ namespace Emerge.Core
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();
-                if (keyboard.cKey.wasPressedThisFrame) CycleChannel();
                 if (keyboard.escapeKey.wasPressedThisFrame && !Application.isEditor) Application.Quit();
                 float direction = (keyboard.eKey.isPressed ? 1 : 0) - (keyboard.qKey.isPressed ? 1 : 0);
                 if (direction != 0) RotateSelected(-direction * 90f * Time.deltaTime);

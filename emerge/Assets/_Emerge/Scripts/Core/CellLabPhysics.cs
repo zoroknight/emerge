@@ -87,7 +87,7 @@ namespace Emerge.Core
         public void StepActuators()
         {
             if (lab == null || lab.IsEditing) return;
-            Signals.Refresh(lab.Graph, lab.Cells);
+            Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
             foreach (var cell in lab.Cells)
             {
                 float intensity = cell.Definition.kind == CellKind.Cilia ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;

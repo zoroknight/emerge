@@ -23,11 +23,7 @@ namespace Emerge.Presentation
         private Text feedback;
         private Button disconnectButton;
         private Button deleteButton;
-        private Button channelButton;
-        private Text channelLabel;
         public Button[] SignalButtons { get; } = new Button[4];
-        public Button EfficiencyButton { get; private set; }
-        private Text efficiencyLabel;
 
         public void Initialize(CellLabController controller)
         {
@@ -55,20 +51,15 @@ namespace Emerge.Presentation
             ClearButton = MakeButton(bar.transform, "清空", 800, lab.ClearLab);
             ModeButton = MakeButton(bar.transform, "", 980, lab.ToggleMode);
             modeLabel = ModeButton.GetComponentInChildren<Text>();
-            channelButton = MakeButton(bar.transform, "", 1160, lab.CycleChannel, 96);
-            channelLabel = channelButton.GetComponentInChildren<Text>();
             status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
             feedback = Label(bar.transform, "", new Vector2(24, -112), new Vector2(750, 28), 17);
             for (int i = 0; i < 4; i++)
             {
                 int channel = i;
-                SignalButtons[i] = MakeButton(bar.transform, "", 24 + i * 100, () => lab.ToggleSignalChannel(channel), 90);
+                SignalButtons[i] = MakeButton(bar.transform, "", 24 + i * 100, () => lab.SetCoreChannel(channel), 90);
                 SignalButtons[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(24 + i * 100, -108);
             }
-            EfficiencyButton = MakeButton(bar.transform, "", 424, lab.CycleSignalEfficiency, 150);
-            EfficiencyButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(424, -108);
-            efficiencyLabel = EfficiencyButton.GetComponentInChildren<Text>();
             disconnectButton = MakeButton(bar.transform, "拆开 [X]", 800, lab.DisconnectSelected);
             deleteButton = MakeButton(bar.transform, "删除 [Delete]", 980, lab.DeleteSelected);
             disconnectButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(800, -108);
@@ -105,32 +96,29 @@ namespace Emerge.Presentation
                 "  |  " + (lab.Selected == lab.PrimaryCore ? "主核心" : lab.IsCoreConnected(lab.Selected) ? "核心连通" : "无核心控制") +
                 (lab.Selected.Definition.kind == Emerge.Cells.CellKind.Cilia ? "  |  响应：" + lab.Selected.Activation.ToString("0.00") : "");
             var edge = lab.SelectedConnection;
-            if (edge != null) details.text = "已选连接：" + edge.A.Definition.displayName + " ↔ " + edge.B.Definition.displayName + "  |  线路：" + Channels(edge.ChannelMask) + "  |  传输效率：" + edge.Efficiency.ToString("P0");
-            bool configure = edge != null || (lab.Selected != null && lab.Selected.Definition.kind == Emerge.Cells.CellKind.Cilia);
-            int mask = edge != null ? edge.ChannelMask : lab.Selected != null ? lab.Selected.ResponseMask : 0;
+            bool configure = lab.IsCoreExit(edge);
+            int mask = lab.ConnectionChannels(edge);
+            if (edge != null) details.text = configure ?
+                "主核心直连出口  |  信号：" + edge.CoreChannel + "  |  后续细胞自动响应与传递" :
+                "后续连接  |  自动继承：" + Channels(mask) + "  |  无需配置通道或损耗";
             for (int i = 0; i < 4; i++)
             {
                 SignalButtons[i].gameObject.SetActive(configure);
                 SignalButtons[i].interactable = lab.IsEditing;
-                SignalButtons[i].GetComponentInChildren<Text>().text = ((Emerge.Cells.IntentChannel)i) + ((mask & (1 << i)) != 0 ? " 开" : " 关");
+                SignalButtons[i].GetComponentInChildren<Text>().text = ((Emerge.Cells.IntentChannel)i) + ((mask & (1 << i)) != 0 ? " 已选" : "");
             }
-            EfficiencyButton.gameObject.SetActive(edge != null);
-            EfficiencyButton.interactable = lab.IsEditing;
-            if (edge != null) efficiencyLabel.text = "效率 " + edge.Efficiency.ToString("P0");
             var feedbackRect = feedback.GetComponent<RectTransform>();
-            feedbackRect.anchoredPosition = new Vector2(edge != null ? 584 : configure ? 424 : 24, -112);
-            feedbackRect.sizeDelta = new Vector2(edge != null ? 196 : configure ? 356 : 750, 28);
+            feedbackRect.anchoredPosition = new Vector2(configure ? 424 : 24, -112);
+            feedbackRect.sizeDelta = new Vector2(configure ? 356 : 750, 28);
             feedback.fontSize = configure ? 14 : 17;
             feedback.text = lab.Message;
             CoreButton.interactable = CiliaButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
-            channelButton.interactable = lab.IsEditing && lab.Selected != null && lab.Selected.Definition.kind == Emerge.Cells.CellKind.Cilia;
-            channelLabel.text = lab.Selected != null && lab.Selected.Definition.kind == Emerge.Cells.CellKind.Cilia && lab.Selected.ResponseMask == (1 << (int)lab.Selected.Channel) ? "通道 " + lab.Selected.Channel + " [C]" : "单通道 [C]";
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖近后松开连接  |  Shift + 点击补边  |  Q / E、滚轮旋转  |  C 单通道  |  X 拆开  |  Delete 删除  |  Tab 游动\n点连接桥配置线路；点纤毛配置响应通道。默认 W 接通，每过普通节点保留 90%；多键取最强值。" :
-                "按住 W / A / S / D 激活对应纤毛  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n橙色箭头变亮表示正在施力；松键后停止施力，惯性在阻尼作用下逐渐减弱。";
+            help.text = lab.IsEditing ? "拖近后松开连接  |  Shift + 点击补边  |  Q / E、滚轮旋转  |  X 拆开  |  Delete 删除  |  Tab 游动\n只在主核心直连的连接桥选择 W / A / S / D；后续自动跟随，每过一个细胞保留 90%。" :
+                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n橙色箭头变亮表示正在施力；松键后停止施力，惯性在阻尼作用下逐渐减弱。";
         }
 
         public static string Channels(int mask)
