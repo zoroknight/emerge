@@ -45,6 +45,8 @@ namespace Emerge.Editor
             PlayerSettings.SetApiCompatibilityLevel(NamedBuildTarget.Standalone, ApiCompatibilityLevel.NET_Standard);
             Time.fixedDeltaTime = 0.02f;
             Physics2D.gravity = Vector2.zero;
+            Physics2D.velocityIterations = 32;
+            Physics2D.positionIterations = 16;
             QualitySettings.vSyncCount = 1;
 
             // Use the Input System already installed by the official 2D template.

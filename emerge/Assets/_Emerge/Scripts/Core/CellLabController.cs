@@ -39,6 +39,8 @@ namespace Emerge.Core
         public CellView Selected => selected;
         public CellLabPanel Panel => panel;
         public CellLabPhysics Physics { get; private set; }
+        public CellDefinition CoreDefinition => core;
+        public CellDefinition CiliaDefinition => cilia;
 
         private void Start()
         {
@@ -53,7 +55,17 @@ namespace Emerge.Core
             motion.Initialize(this, connectionMaterial);
             ResetLab();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-smoke") >= 0)
+            bool stress = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-stress") >= 0;
+#if UNITY_EDITOR
+            stress |= UnityEditor.SessionState.GetBool("Emerge.RunT05", false);
+            UnityEditor.SessionState.EraseBool("Emerge.RunT05");
+#endif
+            if (stress)
+            {
+                Application.runInBackground = true;
+                gameObject.AddComponent<CellStressCheck>();
+            }
+            else if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-smoke") >= 0)
             {
                 Application.runInBackground = true;
                 gameObject.AddComponent<CellLabSmokeCheck>();
@@ -63,6 +75,30 @@ namespace Emerge.Core
 
         public void SpawnCore() => Spawn(core, corePrefab);
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public void PrepareStressLab(int count, float cameraSize)
+        {
+            if (!IsEditing) ToggleMode();
+            ClearLab();
+            capacity = Mathf.Clamp(count, 2, 30);
+            worldCamera.orthographicSize = cameraSize;
+            Physics.RebuildArena();
+        }
+
+        public CellView CreateStressCell(CellKind kind, Vector3 position, float rotation)
+        {
+            if (!IsEditing || cells.Count >= capacity) throw new System.InvalidOperationException("压力测试节点数量无效。");
+            var data = kind == CellKind.Core ? core : cilia;
+            var prefab = kind == CellKind.Core ? corePrefab : ciliaPrefab;
+            var cell = Instantiate(prefab, position, Quaternion.Euler(0, 0, rotation), cellsRoot);
+            cell.Initialize(data); cell.name = "压力样本 " + cells.Count;
+            cell.Body.interpolation = RigidbodyInterpolation2D.None;
+            cells.Add(cell);
+            if (PrimaryCore == null && kind == CellKind.Core) PrimaryCore = cell;
+            return cell;
+        }
+#endif
 
         private void Spawn(CellDefinition data, CellView prefab)
         {

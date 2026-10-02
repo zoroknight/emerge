@@ -1,0 +1,745 @@
+{
+    "timestampUtc": "2026-10-02T08:40:28.6096858Z",
+    "unity": "6000.4.7f1",
+    "runtime": "Windows development player",
+    "processor": "AMD Ryzen 9 8945HX with Radeon Graphics ",
+    "graphics": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "os": "Windows 11  (10.0.26200)",
+    "ramMb": 32560,
+    "velocityIterations": 8,
+    "positionIterations": 3,
+    "timestep": 0.019999992102384568,
+    "coreRadius": 0.7200000286102295,
+    "ciliaRadius": 0.5799999833106995,
+    "coreMass": 1.399999976158142,
+    "ciliaMass": 1.0,
+    "thrust": 3.5,
+    "maxAllowedAnchorError": 0.25,
+    "maxAllowedPenetration": 0.05999999865889549,
+    "maxAllowedSpeed": 16.0,
+    "maxAllowedAngularSpeed": 720.0,
+    "recoveryAnchorLimit": 0.029999999329447748,
+    "recoverySpeedLimit": 0.15000000596046449,
+    "recoveryAngularLimit": 3.0,
+    "simulateP95BudgetMs": 4.0,
+    "passed": false,
+    "decision": "needs_fix_or_fallback",
+    "failure": "",
+    "runtimeErrors": [],
+    "cases": [
+        {
+            "shape": "chain",
+            "nodes": 20,
+            "edges": 19,
+            "passed": false,
+            "failure": "recovery: Did not settle within 5 seconds after drive and flow stopped.  ",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 0.0,
+                    "maxEdgeLengthError": 0.0000017881393432617188,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0,
+                    "maxAngularSpeed": 0.0,
+                    "finalAnchorError": 0.0,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.0033650000000000005,
+                    "simulateP95Ms": 0.0065,
+                    "simulateMaxMs": 0.112,
+                    "driverMeanMs": 0.010362999999999998,
+                    "corePosition": {
+                        "x": -11.09000015258789,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.045574188232421878,
+                    "maxEdgeLengthError": 0.0455704927444458,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.702453136444092,
+                    "maxAngularSpeed": 0.00001761684143275488,
+                    "finalAnchorError": 0.0000514984130859375,
+                    "finalSpeed": 2.276232358155994e-8,
+                    "finalAngularSpeed": 0.0000013975079582451145,
+                    "simulateMeanMs": 0.008140999999999937,
+                    "simulateP95Ms": 0.0123,
+                    "simulateMaxMs": 0.0868,
+                    "driverMeanMs": 0.012626900000000025,
+                    "corePosition": {
+                        "x": -1.4307876825332642,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.01446533203125,
+                    "maxEdgeLengthError": 0.014461636543273926,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 1.0012898445129395,
+                    "maxAngularSpeed": 0.000006749630756530678,
+                    "finalAnchorError": 0.0005254745483398438,
+                    "finalSpeed": 0.46349117159843447,
+                    "finalAngularSpeed": 0.0000018838076130123227,
+                    "simulateMeanMs": 0.008217000000000004,
+                    "simulateP95Ms": 0.0116,
+                    "simulateMaxMs": 0.0363,
+                    "driverMeanMs": 0.011200699999999975,
+                    "corePosition": {
+                        "x": -1.564469575881958,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.043663833290338519,
+                    "maxEdgeLengthError": 0.12685441970825196,
+                    "maxNonAdjacentPenetration": 0.014871358871459961,
+                    "maxSpeed": 5.499225616455078,
+                    "maxAngularSpeed": 134.3169708251953,
+                    "finalAnchorError": 0.00013585556007456034,
+                    "finalSpeed": 0.13402025401592256,
+                    "finalAngularSpeed": 3.1429293155670168,
+                    "simulateMeanMs": 0.018999899999999935,
+                    "simulateP95Ms": 0.0163,
+                    "simulateMaxMs": 6.9421,
+                    "driverMeanMs": 0.015615800000000013,
+                    "corePosition": {
+                        "x": 20.607807159423829,
+                        "y": -7.4506072998046879
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.001712317462079227,
+                    "maxEdgeLengthError": 0.11001408100128174,
+                    "maxNonAdjacentPenetration": 0.002232789993286133,
+                    "maxSpeed": 3.0194263458251955,
+                    "maxAngularSpeed": 53.20382308959961,
+                    "finalAnchorError": 0.000028048403692082502,
+                    "finalSpeed": 1.326965093612671,
+                    "finalAngularSpeed": 6.836977481842041,
+                    "simulateMeanMs": 0.009601599999999999,
+                    "simulateP95Ms": 0.0145,
+                    "simulateMaxMs": 0.0391,
+                    "driverMeanMs": 0.011757200000000006,
+                    "corePosition": {
+                        "x": 16.609649658203126,
+                        "y": -7.55342435836792
+                    },
+                    "failure": "Did not settle within 5 seconds after drive and flow stopped. "
+                }
+            ]
+        },
+        {
+            "shape": "ring",
+            "nodes": 20,
+            "edges": 20,
+            "passed": true,
+            "failure": "",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 4.805480102731963e-7,
+                    "maxEdgeLengthError": 8.940696716308594e-7,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0000030853527732688237,
+                    "maxAngularSpeed": 0.00022788697970099747,
+                    "finalAnchorError": 2.980232238769531e-7,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.002281000000000001,
+                    "simulateP95Ms": 0.0064,
+                    "simulateMaxMs": 0.0185,
+                    "driverMeanMs": 0.010591000000000004,
+                    "corePosition": {
+                        "x": -1.3646925367538643e-7,
+                        "y": 1.8324323892593384
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.0019464297220110894,
+                    "maxEdgeLengthError": 0.0019431710243225098,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.830929756164551,
+                    "maxAngularSpeed": 40.65408706665039,
+                    "finalAnchorError": 0.0019460998009890318,
+                    "finalSpeed": 2.830928087234497,
+                    "finalAngularSpeed": 40.65404510498047,
+                    "simulateMeanMs": 0.009112300000000025,
+                    "simulateP95Ms": 0.0142,
+                    "simulateMaxMs": 0.066,
+                    "driverMeanMs": 0.013411700000000027,
+                    "corePosition": {
+                        "x": 2.869431972503662,
+                        "y": 0.2820079028606415
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.0019460004987195135,
+                    "maxEdgeLengthError": 0.0019429326057434083,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.8309292793273927,
+                    "maxAngularSpeed": 40.65451431274414,
+                    "finalAnchorError": 0.0003597343747969717,
+                    "finalSpeed": 1.0238769054412842,
+                    "finalAngularSpeed": 15.038625717163086,
+                    "simulateMeanMs": 0.008318200000000007,
+                    "simulateP95Ms": 0.0111,
+                    "simulateMaxMs": 0.0338,
+                    "driverMeanMs": 0.0127345,
+                    "corePosition": {
+                        "x": 2.7346253395080568,
+                        "y": -3.6695892810821535
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.015072613023221493,
+                    "maxEdgeLengthError": 0.04276549816131592,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 5.795106410980225,
+                    "maxAngularSpeed": 146.09408569335938,
+                    "finalAnchorError": 0.0001561960089020431,
+                    "finalSpeed": 0.8979260325431824,
+                    "finalAngularSpeed": 14.5939359664917,
+                    "simulateMeanMs": 0.010560499999999985,
+                    "simulateP95Ms": 0.0156,
+                    "simulateMaxMs": 0.1134,
+                    "driverMeanMs": 0.015946899999999998,
+                    "corePosition": {
+                        "x": 18.31460189819336,
+                        "y": -3.6425538063049318
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.0017921329708769918,
+                    "maxEdgeLengthError": 0.031007766723632814,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 3.787550926208496,
+                    "maxAngularSpeed": 48.607818603515628,
+                    "finalAnchorError": 0.0000021324806311895374,
+                    "finalSpeed": 0.0471218079328537,
+                    "finalAngularSpeed": 0.7960346341133118,
+                    "simulateMeanMs": 0.008104800000000011,
+                    "simulateP95Ms": 0.0119,
+                    "simulateMaxMs": 0.0342,
+                    "driverMeanMs": 0.012276399999999997,
+                    "corePosition": {
+                        "x": 15.317474365234375,
+                        "y": -2.7953221797943117
+                    },
+                    "failure": ""
+                }
+            ]
+        },
+        {
+            "shape": "symmetric",
+            "nodes": 20,
+            "edges": 19,
+            "passed": false,
+            "failure": "recovery: Did not settle within 5 seconds after drive and flow stopped.  ",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 2.6656007889869218e-7,
+                    "maxEdgeLengthError": 3.5762786865234377e-7,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0000015215296116366517,
+                    "maxAngularSpeed": 0.00021005577582400292,
+                    "finalAnchorError": 2.6656007889869218e-7,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.002651,
+                    "simulateP95Ms": 0.0065,
+                    "simulateMaxMs": 0.0419,
+                    "driverMeanMs": 0.011556,
+                    "corePosition": {
+                        "x": 8.388263239567095e-8,
+                        "y": -1.9200000762939454
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.03990347683429718,
+                    "maxEdgeLengthError": 0.03093940019607544,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 3.169224500656128,
+                    "maxAngularSpeed": 94.5081787109375,
+                    "finalAnchorError": 0.0000010662403155947687,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.01050280000000002,
+                    "simulateP95Ms": 0.0154,
+                    "simulateMaxMs": 0.0648,
+                    "driverMeanMs": 0.01305630000000003,
+                    "corePosition": {
+                        "x": 0.00027501481235958636,
+                        "y": 4.3549957275390629
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.0005485238507390022,
+                    "maxEdgeLengthError": 0.0028142333030700685,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.9476720094680786,
+                    "maxAngularSpeed": 22.098173141479493,
+                    "finalAnchorError": 0.0003689108125399798,
+                    "finalSpeed": 0.5927265882492065,
+                    "finalAngularSpeed": 12.115813255310059,
+                    "simulateMeanMs": 0.010038099999999988,
+                    "simulateP95Ms": 0.0156,
+                    "simulateMaxMs": 0.0793,
+                    "driverMeanMs": 0.013038599999999968,
+                    "corePosition": {
+                        "x": 0.00006662373198196292,
+                        "y": 4.354612350463867
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.027280040085315706,
+                    "maxEdgeLengthError": 0.1666196584701538,
+                    "maxNonAdjacentPenetration": 0.011585354804992676,
+                    "maxSpeed": 5.592496395111084,
+                    "maxAngularSpeed": 240.9097900390625,
+                    "finalAnchorError": 0.00008232728578150272,
+                    "finalSpeed": 0.3823794722557068,
+                    "finalAngularSpeed": 9.568709373474121,
+                    "simulateMeanMs": 0.012483399999999996,
+                    "simulateP95Ms": 0.0172,
+                    "simulateMaxMs": 0.2939,
+                    "driverMeanMs": 0.01470450000000002,
+                    "corePosition": {
+                        "x": 18.81155776977539,
+                        "y": -3.5390067100524904
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.0026402780786156656,
+                    "maxEdgeLengthError": 0.14852583408355714,
+                    "maxNonAdjacentPenetration": 0.0020241737365722658,
+                    "maxSpeed": 6.4251017570495609,
+                    "maxAngularSpeed": 204.49649047851563,
+                    "finalAnchorError": 0.00009748754382599145,
+                    "finalSpeed": 1.4295803308486939,
+                    "finalAngularSpeed": 7.557401180267334,
+                    "simulateMeanMs": 0.0103888,
+                    "simulateP95Ms": 0.0257,
+                    "simulateMaxMs": 0.0445,
+                    "driverMeanMs": 0.013787199999999993,
+                    "corePosition": {
+                        "x": 15.547210693359375,
+                        "y": -2.5404677391052248
+                    },
+                    "failure": "Did not settle within 5 seconds after drive and flow stopped. "
+                }
+            ]
+        },
+        {
+            "shape": "chain",
+            "nodes": 30,
+            "edges": 29,
+            "passed": false,
+            "failure": "recovery: Did not settle within 5 seconds after drive and flow stopped.  ",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 0.0,
+                    "maxEdgeLengthError": 0.0000017881393432617188,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0,
+                    "maxAngularSpeed": 0.0,
+                    "finalAnchorError": 0.0,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.002958999999999998,
+                    "simulateP95Ms": 0.009,
+                    "simulateMaxMs": 0.0212,
+                    "driverMeanMs": 0.01826300000000001,
+                    "corePosition": {
+                        "x": -16.889999389648439,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.039306640625,
+                    "maxEdgeLengthError": 0.03930675983428955,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.590012311935425,
+                    "maxAngularSpeed": 0.00002484347714926116,
+                    "finalAnchorError": 0.00030517578125,
+                    "finalSpeed": 1.245188201437486e-7,
+                    "finalAngularSpeed": 0.000004727589839603752,
+                    "simulateMeanMs": 0.011014100000000039,
+                    "simulateP95Ms": 0.0154,
+                    "simulateMaxMs": 0.0847,
+                    "driverMeanMs": 0.02135199999999991,
+                    "corePosition": {
+                        "x": -13.024641036987305,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.01505279541015625,
+                    "maxEdgeLengthError": 0.0150529146194458,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 1.0472228527069092,
+                    "maxAngularSpeed": 0.000009745167517394293,
+                    "finalAnchorError": 0.001998424530029297,
+                    "finalSpeed": 0.607531726360321,
+                    "finalAngularSpeed": 0.000002512154196665506,
+                    "simulateMeanMs": 0.012050199999999985,
+                    "simulateP95Ms": 0.0152,
+                    "simulateMaxMs": 0.1225,
+                    "driverMeanMs": 0.02114779999999995,
+                    "corePosition": {
+                        "x": -13.150473594665528,
+                        "y": -1.9199999570846558
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.05088449642062187,
+                    "maxEdgeLengthError": 0.15262603759765626,
+                    "maxNonAdjacentPenetration": 0.014822304248809815,
+                    "maxSpeed": 6.471785068511963,
+                    "maxAngularSpeed": 147.6881561279297,
+                    "finalAnchorError": 0.000257605075603351,
+                    "finalSpeed": 0.12351200729608536,
+                    "finalAngularSpeed": 2.9680280685424806,
+                    "simulateMeanMs": 0.01682479999999994,
+                    "simulateP95Ms": 0.0221,
+                    "simulateMaxMs": 0.1365,
+                    "driverMeanMs": 0.025609299999999978,
+                    "corePosition": {
+                        "x": 18.814279556274415,
+                        "y": -2.2514803409576418
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.002429881365969777,
+                    "maxEdgeLengthError": 0.12020540237426758,
+                    "maxNonAdjacentPenetration": 0.004821062088012695,
+                    "maxSpeed": 4.42057466506958,
+                    "maxAngularSpeed": 61.75611114501953,
+                    "finalAnchorError": 0.00017598328122403473,
+                    "finalSpeed": 2.125852584838867,
+                    "finalAngularSpeed": 21.586753845214845,
+                    "simulateMeanMs": 0.013568799999999999,
+                    "simulateP95Ms": 0.0196,
+                    "simulateMaxMs": 0.0679,
+                    "driverMeanMs": 0.021500799999999984,
+                    "corePosition": {
+                        "x": 8.397468566894532,
+                        "y": -7.524105548858643
+                    },
+                    "failure": "Did not settle within 5 seconds after drive and flow stopped. "
+                }
+            ]
+        },
+        {
+            "shape": "ring",
+            "nodes": 30,
+            "edges": 30,
+            "passed": true,
+            "failure": "",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 4.76837158203125e-7,
+                    "maxEdgeLengthError": 0.000017583370208740234,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0000021017542621848408,
+                    "maxAngularSpeed": 0.0004462377983145416,
+                    "finalAnchorError": 4.76837158203125e-7,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.0031780000000000004,
+                    "simulateP95Ms": 0.0096,
+                    "simulateMaxMs": 0.0296,
+                    "driverMeanMs": 0.018768000000000005,
+                    "corePosition": {
+                        "x": -2.8932072382303888e-7,
+                        "y": 3.67340087890625
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.0021572294645011427,
+                    "maxEdgeLengthError": 0.002136409282684326,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.8872053623199465,
+                    "maxAngularSpeed": 28.33001708984375,
+                    "finalAnchorError": 0.002156131435185671,
+                    "finalSpeed": 2.887037992477417,
+                    "finalAngularSpeed": 28.307559967041017,
+                    "simulateMeanMs": 0.013247200000000024,
+                    "simulateP95Ms": 0.0164,
+                    "simulateMaxMs": 0.1325,
+                    "driverMeanMs": 0.02201689999999998,
+                    "corePosition": {
+                        "x": -0.15595415234565736,
+                        "y": -6.9779744148254398
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.002156408503651619,
+                    "maxEdgeLengthError": 0.0021358132362365724,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 2.887038230895996,
+                    "maxAngularSpeed": 28.30841636657715,
+                    "finalAnchorError": 0.00045738701010122895,
+                    "finalSpeed": 1.03271484375,
+                    "finalAngularSpeed": 10.593961715698243,
+                    "simulateMeanMs": 0.012519600000000004,
+                    "simulateP95Ms": 0.0154,
+                    "simulateMaxMs": 0.0496,
+                    "driverMeanMs": 0.02194590000000001,
+                    "corePosition": {
+                        "x": 4.585486888885498,
+                        "y": -4.091393947601318
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.026636671274900438,
+                    "maxEdgeLengthError": 0.08908271789550781,
+                    "maxNonAdjacentPenetration": 0.014857769012451172,
+                    "maxSpeed": 5.757884979248047,
+                    "maxAngularSpeed": 129.72842407226563,
+                    "finalAnchorError": 0.0002387926069786772,
+                    "finalSpeed": 0.2250584214925766,
+                    "finalAngularSpeed": 5.0574774742126469,
+                    "simulateMeanMs": 0.016359500000000004,
+                    "simulateP95Ms": 0.0206,
+                    "simulateMaxMs": 0.0607,
+                    "driverMeanMs": 0.025853500000000096,
+                    "corePosition": {
+                        "x": 20.60384178161621,
+                        "y": -7.199592590332031
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.0025414444971829654,
+                    "maxEdgeLengthError": 0.06582307815551758,
+                    "maxNonAdjacentPenetration": 0.00486147403717041,
+                    "maxSpeed": 5.796971321105957,
+                    "maxAngularSpeed": 67.49968719482422,
+                    "finalAnchorError": 0.000018596649169921875,
+                    "finalSpeed": 0.13451243937015534,
+                    "finalAngularSpeed": 0.8634369373321533,
+                    "simulateMeanMs": 0.013989600000000016,
+                    "simulateP95Ms": 0.0182,
+                    "simulateMaxMs": 0.0506,
+                    "driverMeanMs": 0.023208000000000008,
+                    "corePosition": {
+                        "x": 18.325172424316408,
+                        "y": -6.443276882171631
+                    },
+                    "failure": ""
+                }
+            ]
+        },
+        {
+            "shape": "symmetric",
+            "nodes": 30,
+            "edges": 29,
+            "passed": false,
+            "failure": "recovery: Did not settle within 5 seconds after drive and flow stopped.  ",
+            "phases": [
+                {
+                    "phase": "settle",
+                    "steps": 100,
+                    "seconds": 2.0,
+                    "maxAnchorError": 2.6656007889869218e-7,
+                    "maxEdgeLengthError": 3.5762786865234377e-7,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.0000015214126278806362,
+                    "maxAngularSpeed": 0.0002100557612720877,
+                    "finalAnchorError": 2.6656007889869218e-7,
+                    "finalSpeed": 0.0,
+                    "finalAngularSpeed": 0.0,
+                    "simulateMeanMs": 0.0031439999999999994,
+                    "simulateP95Ms": 0.0094,
+                    "simulateMaxMs": 0.023,
+                    "driverMeanMs": 0.028354000000000009,
+                    "corePosition": {
+                        "x": 8.540113327626386e-8,
+                        "y": -1.9200000762939454
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "continuous",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.033123016357421878,
+                    "maxEdgeLengthError": 0.03312283754348755,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 3.3552560806274416,
+                    "maxAngularSpeed": 104.39083862304688,
+                    "finalAnchorError": 0.0000019660499219753548,
+                    "finalSpeed": 0.000011079282558057457,
+                    "finalAngularSpeed": 0.0007978000794537365,
+                    "simulateMeanMs": 0.017841499999999914,
+                    "simulateP95Ms": 0.0232,
+                    "simulateMaxMs": 0.0819,
+                    "driverMeanMs": 0.021473599999999997,
+                    "corePosition": {
+                        "x": 0.0011650867527350784,
+                        "y": 4.355000972747803
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "pulsed",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.0014208188513293863,
+                    "maxEdgeLengthError": 0.002960026264190674,
+                    "maxNonAdjacentPenetration": 0.0,
+                    "maxSpeed": 0.8075836300849915,
+                    "maxAngularSpeed": 13.953934669494629,
+                    "finalAnchorError": 0.00027257396141067147,
+                    "finalSpeed": 0.6123407483100891,
+                    "finalAngularSpeed": 9.485660552978516,
+                    "simulateMeanMs": 0.017269599999999983,
+                    "simulateP95Ms": 0.0203,
+                    "simulateMaxMs": 0.3053,
+                    "driverMeanMs": 0.021202300000000005,
+                    "corePosition": {
+                        "x": -0.0003521364415064454,
+                        "y": 4.354762554168701
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "strong_flow",
+                    "steps": 1000,
+                    "seconds": 20.0,
+                    "maxAnchorError": 0.06071748584508896,
+                    "maxEdgeLengthError": 0.16464316844940186,
+                    "maxNonAdjacentPenetration": 0.015317797660827637,
+                    "maxSpeed": 5.000365734100342,
+                    "maxAngularSpeed": 162.25550842285157,
+                    "finalAnchorError": 0.0001164247005362995,
+                    "finalSpeed": 0.03914239630103111,
+                    "finalAngularSpeed": 1.4262360334396363,
+                    "simulateMeanMs": 0.01943479999999995,
+                    "simulateP95Ms": 0.0249,
+                    "simulateMaxMs": 0.0882,
+                    "driverMeanMs": 0.025729499999999934,
+                    "corePosition": {
+                        "x": 18.39611053466797,
+                        "y": -2.07391619682312
+                    },
+                    "failure": ""
+                },
+                {
+                    "phase": "recovery",
+                    "steps": 250,
+                    "seconds": 5.0,
+                    "maxAnchorError": 0.001377291977405548,
+                    "maxEdgeLengthError": 0.11773812770843506,
+                    "maxNonAdjacentPenetration": 0.004961729049682617,
+                    "maxSpeed": 2.108529806137085,
+                    "maxAngularSpeed": 37.24797439575195,
+                    "finalAnchorError": 0.0001227983011631295,
+                    "finalSpeed": 1.3511945009231568,
+                    "finalAngularSpeed": 12.275005340576172,
+                    "simulateMeanMs": 0.016816399999999996,
+                    "simulateP95Ms": 0.0208,
+                    "simulateMaxMs": 0.2864,
+                    "driverMeanMs": 0.023609200000000015,
+                    "corePosition": {
+                        "x": 15.551791191101075,
+                        "y": -6.101417064666748
+                    },
+                    "failure": "Did not settle within 5 seconds after drive and flow stopped. "
+                }
+            ]
+        }
+    ]
+}

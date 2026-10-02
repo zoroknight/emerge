@@ -14,6 +14,12 @@ namespace Emerge.Core
         private readonly List<FixedJoint2D> joints = new List<FixedJoint2D>();
         public int JointCount => joints.Count;
         public int ActiveMask { get; private set; }
+        // Rigid joints avoid storing large elastic deformations in long chains under wall / flow loads.
+        public const float JointFrequency = 0f;
+        public IReadOnlyList<FixedJoint2D> ActiveJoints => joints;
+        private Camera arenaCamera;
+        private Material arenaMaterial;
+        private GameObject arena;
 
         public void Initialize(CellLabController controller, InputActionAsset template, Material material, Camera camera)
         {
@@ -29,7 +35,8 @@ namespace Emerge.Core
                 intents[i].canceled += OnIntent;
             }
             controls.Enable();
-            CreateArena(camera, material);
+            arenaCamera = camera; arenaMaterial = material;
+            RebuildArena();
         }
 
         private void OnIntent(InputAction.CallbackContext context)
@@ -54,7 +61,7 @@ namespace Emerge.Core
                 joint.connectedBody = edge.B.Body;
                 joint.anchor = edge.A.transform.InverseTransformPoint(point);
                 joint.connectedAnchor = edge.B.transform.InverseTransformPoint(point);
-                joint.frequency = 8f; joint.dampingRatio = 1f;
+                joint.frequency = JointFrequency; joint.dampingRatio = 1f;
                 joint.enableCollision = false;
                 joints.Add(joint);
             }
@@ -72,6 +79,11 @@ namespace Emerge.Core
         }
 
         private void FixedUpdate()
+        {
+            if (Physics2D.simulationMode == SimulationMode2D.FixedUpdate) StepActuators();
+        }
+
+        public void StepActuators()
         {
             if (lab == null || lab.IsEditing) return;
             var controlled = lab.Graph.Component(lab.PrimaryCore);
@@ -110,19 +122,20 @@ namespace Emerge.Core
             Destroy(controls);
         }
 
-        private void CreateArena(Camera camera, Material material)
+        public void RebuildArena()
         {
-            Vector3 min = camera.ViewportToWorldPoint(new Vector3(0, 0.08f, -camera.transform.position.z));
-            Vector3 max = camera.ViewportToWorldPoint(new Vector3(1, 0.76f, -camera.transform.position.z));
+            if (arena != null) { arena.SetActive(false); Destroy(arena); }
+            Vector3 min = arenaCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -arenaCamera.transform.position.z));
+            Vector3 max = arenaCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -arenaCamera.transform.position.z));
             Vector2 center = (min + max) / 2;
             Vector2 size = max - min;
-            var arena = new GameObject("实验室边界"); arena.transform.SetParent(transform, false);
+            arena = new GameObject("实验室边界"); arena.transform.SetParent(transform, false);
             Wall(arena.transform, new Vector2(min.x - 0.15f, center.y), new Vector2(0.3f, size.y + 0.6f));
             Wall(arena.transform, new Vector2(max.x + 0.15f, center.y), new Vector2(0.3f, size.y + 0.6f));
             Wall(arena.transform, new Vector2(center.x, min.y - 0.15f), new Vector2(size.x, 0.3f));
             Wall(arena.transform, new Vector2(center.x, max.y + 0.15f), new Vector2(size.x, 0.3f));
             var line = arena.AddComponent<LineRenderer>();
-            line.sharedMaterial = material; line.positionCount = 5; line.useWorldSpace = true;
+            line.sharedMaterial = arenaMaterial; line.positionCount = 5; line.useWorldSpace = true;
             line.startWidth = line.endWidth = 0.025f; line.sortingOrder = -3;
             line.startColor = line.endColor = new Color(0.18f, 0.4f, 0.44f);
             line.SetPositions(new[] { min, new Vector3(max.x, min.y, 0), max, new Vector3(min.x, max.y, 0), min });
