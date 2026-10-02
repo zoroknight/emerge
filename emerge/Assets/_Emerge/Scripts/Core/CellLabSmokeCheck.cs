@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T06_CHECK_START");
+            Debug.Log("CELL_LAB_T07_CHECK_START");
             string failure = null;
             try
             {
@@ -86,6 +86,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return CellM1SmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellM1SmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -104,11 +110,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T06_PASS: T01-T05 baseline regression, routed signals, input-driven physics and cleanup.");
+                    Debug.Log("CELL_LAB_T07_PASS: M1 functional acceptance and T01-T06 regression.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T06_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T07_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 
@@ -117,11 +123,14 @@ namespace Emerge.Core
             if (!value) throw new InvalidOperationException(message);
         }
 
-        private static void CapturePreview(string path)
+        public static void CapturePreview(string path)
         {
             // Render explicitly: a hidden Windows swap chain can return an all-black screenshot.
             Camera camera = Camera.main;
             var canvas = FindAnyObjectByType<Canvas>();
+            var previousMode = canvas.renderMode;
+            var previousCamera = canvas.worldCamera;
+            float previousDistance = canvas.planeDistance, previousAspect = camera.aspect;
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = camera;
             canvas.planeDistance = 1;
@@ -143,6 +152,9 @@ namespace Emerge.Core
                 RenderTexture.active = previous;
                 RenderTexture.ReleaseTemporary(target);
                 Destroy(texture);
+                canvas.renderMode = previousMode; canvas.worldCamera = previousCamera; canvas.planeDistance = previousDistance;
+                camera.aspect = previousAspect;
+                Canvas.ForceUpdateCanvases();
             }
         }
     }

@@ -41,10 +41,15 @@ namespace Emerge.Cells
         public void ApplyThrust(float activation)
         {
             Activation = Mathf.Clamp01(activation);
+            LastForce = ForceFor(Activation);
+            if (Body.simulated && LastForce.sqrMagnitude > 0) Body.AddForceAtPosition(LastForce, Body.worldCenterOfMass, ForceMode2D.Force);
+        }
+
+        public Vector2 ForceFor(float activation)
+        {
             float radians = Body.rotation * Mathf.Deg2Rad;
             Vector2 direction = Body.simulated ? new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)) : FluidDirection;
-            LastForce = definition.kind == CellKind.Cilia ? -direction * definition.thrust * Activation : Vector2.zero;
-            if (Body.simulated && LastForce.sqrMagnitude > 0) Body.AddForceAtPosition(LastForce, Body.worldCenterOfMass, ForceMode2D.Force);
+            return definition.kind == CellKind.Cilia ? -direction * definition.thrust * Mathf.Clamp01(activation) : Vector2.zero;
         }
 
         public void SetSimulation(bool enabled)

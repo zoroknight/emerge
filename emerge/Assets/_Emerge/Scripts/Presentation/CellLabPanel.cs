@@ -1,4 +1,5 @@
 using Emerge.Core;
+using Emerge.Cells;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
@@ -18,6 +19,8 @@ namespace Emerge.Presentation
         public Button ResetButton { get; private set; }
         public Button ClearButton { get; private set; }
         public Button ModeButton { get; private set; }
+        public Button ExampleButton { get; private set; }
+        public string ForceText => feedback != null ? feedback.text : "";
         private Text modeLabel;
         private Text help;
         private Text feedback;
@@ -51,6 +54,7 @@ namespace Emerge.Presentation
             ClearButton = MakeButton(bar.transform, "清空", 800, lab.ClearLab);
             ModeButton = MakeButton(bar.transform, "", 980, lab.ToggleMode);
             modeLabel = ModeButton.GetComponentInChildren<Text>();
+            ExampleButton = MakeButton(bar.transform, "示例 [3]", 1160, lab.LoadNextExample, 96);
             status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
             feedback = Label(bar.transform, "", new Vector2(24, -112), new Vector2(750, 28), 17);
@@ -94,7 +98,9 @@ namespace Emerge.Presentation
                 "  |  朝向：" + lab.Selected.transform.eulerAngles.z.ToString("0") + "°" +
                 "  |  连接：" + lab.Graph.Degree(lab.Selected) + "/" + lab.Selected.Definition.maxConnections +
                 "  |  " + (lab.Selected == lab.PrimaryCore ? "主核心" : lab.IsCoreConnected(lab.Selected) ? "核心连通" : "无核心控制") +
-                (lab.Selected.Definition.kind == Emerge.Cells.CellKind.Cilia ? "  |  响应：" + lab.Selected.Activation.ToString("0.00") : "");
+                (lab.Selected.Definition.kind == CellKind.Cilia ? "  |  信号：" + ReceivedSignals(lab.Selected) +
+                    "  |  " + (lab.IsEditing ? "预览：" : "响应：") +
+                    (lab.IsEditing && lab.Physics != null ? lab.Physics.ActivationFor(lab.Selected) : lab.Selected.Activation).ToString("0.00") : "");
             var edge = lab.SelectedConnection;
             bool configure = lab.IsCoreExit(edge);
             int mask = lab.ConnectionChannels(edge);
@@ -112,13 +118,36 @@ namespace Emerge.Presentation
             feedbackRect.sizeDelta = new Vector2(configure ? 356 : 750, 28);
             feedback.fontSize = configure ? 14 : 17;
             feedback.text = lab.Message;
+            if (lab.Physics != null && (!lab.IsEditing || lab.Physics.ActiveMask != 0))
+            {
+                var force = CellForceSummary.Calculate(lab);
+                string turn = Mathf.Abs(force.Torque) < 0.001f ? "平衡" : force.Torque > 0 ? "逆时针" : "顺时针";
+                feedback.text = (lab.IsEditing ? "预览 " : "施力 ") + (input.Length == 0 ? "无" : input.TrimEnd()) +
+                    " · 激活 " + force.ActiveCilia + " · 合力 " + (configure ? force.Force.magnitude.ToString("0.00") :
+                    "(" + force.Force.x.ToString("0.00") + ", " + force.Force.y.ToString("0.00") + ")") +
+                    " · " + turn + " " + Mathf.Abs(force.Torque).ToString("0.00");
+            }
             CoreButton.interactable = CiliaButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
+            ExampleButton.interactable = lab.IsEditing && lab.Capacity >= 3;
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖近后松开连接  |  Shift + 点击补边  |  Q / E、滚轮旋转  |  X 拆开  |  Delete 删除  |  Tab 游动\n只在主核心直连的连接桥选择 W / A / S / D；后续自动跟随，每过一个细胞保留 90%。" :
+            help.text = lab.IsEditing ? "拖近松开连接  |  Shift + 点击补边  |  Q / E、滚轮旋转  |  X 拆开  |  Delete 删除  |  3 载入示例（替换身体）\n只配置核心出口，后续自动跟随；按住 WASD 预览，Tab 游动。紫箭头表示合力，转矩显示转向趋势。" :
                 "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n橙色箭头变亮表示正在施力；松键后停止施力，惯性在阻尼作用下逐渐减弱。";
+        }
+
+        private string ReceivedSignals(CellView cell)
+        {
+            if (lab.Physics == null) return "无";
+            lab.Physics.Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
+            string value = "";
+            for (int c = 0; c < 4; c++)
+            {
+                float strength = lab.Physics.Signals.Strength(lab.PrimaryCore, cell, c);
+                if (strength > 0) value += ((IntentChannel)c) + " " + strength.ToString("P0") + " ";
+            }
+            return value.Length == 0 ? "无" : value.TrimEnd();
         }
 
         public static string Channels(int mask)

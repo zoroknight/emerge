@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 namespace Emerge.Core
 {
     public enum LabMode { Edit, Swim }
+    public enum LabExample { Straight, Turn, Reverse }
 
     public sealed class CellLabController : MonoBehaviour
     {
@@ -28,6 +29,7 @@ namespace Emerge.Core
         private Vector3 dragOffset;
         private HashSet<CellView> dragGroup;
         private bool dragMoved;
+        private int exampleIndex = -1;
         public CellGraph Graph { get; } = new CellGraph();
         public CellView PrimaryCore { get; private set; }
         public string Message { get; private set; } = "拖近其他细胞后松开即可连接。";
@@ -76,6 +78,29 @@ namespace Emerge.Core
 
         public void SpawnCore() => Spawn(core, corePrefab);
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
+
+        public void LoadNextExample()
+        {
+            if (!IsEditing) return;
+            exampleIndex = (exampleIndex + 1) % 3;
+            LoadExample((LabExample)exampleIndex);
+        }
+
+        public void LoadExample(LabExample example)
+        {
+            if (!IsEditing || capacity < 3) return;
+            ClearLab(); SpawnCore(); SpawnCilia(); SpawnCilia();
+            Vector3 center = new Vector3(0, -1, 0);
+            float gap = core.radius + cilia.radius;
+            cells[0].transform.position = center;
+            cells[1].transform.position = center + Vector3.up * gap;
+            cells[2].transform.position = center + Vector3.down * gap;
+            cells[1].transform.rotation = Quaternion.Euler(0, 0, example == LabExample.Reverse ? 0 : 180);
+            cells[2].transform.rotation = Quaternion.Euler(0, 0, example == LabExample.Reverse ? 0 : example == LabExample.Turn ? 90 : 180);
+            Connect(cells[0], cells[1]); Connect(cells[0], cells[2]); Select(cells[0]);
+            string title = example == LabExample.Straight ? "直行" : example == LabExample.Turn ? "偏转" : "反向";
+            SetMessage("已载入" + title + "示例：同为核心 + 两个纤毛。按住 W 预览，Tab 游动。");
+        }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         public void PrepareStressLab(int count, float cameraSize)
@@ -337,6 +362,7 @@ namespace Emerge.Core
                 if (keyboard.tabKey.wasPressedThisFrame) ToggleMode();
                 if (keyboard.digit1Key.wasPressedThisFrame) SpawnCore();
                 if (keyboard.digit2Key.wasPressedThisFrame) SpawnCilia();
+                if (keyboard.digit3Key.wasPressedThisFrame) LoadNextExample();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();

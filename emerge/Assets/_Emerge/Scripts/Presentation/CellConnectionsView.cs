@@ -46,7 +46,7 @@ namespace Emerge.Presentation
                 Color color = new Color(0.38f, 0.42f, 0.46f);
                 for (int c = 0; c < 4; c++) if ((mask & (1 << c)) != 0) { color = ChannelColors[c]; break; }
                 float activity = 0;
-                if (!lab.IsEditing)
+                if (lab.Physics.ActiveMask != 0)
                     for (int c = 0; c < 4; c++)
                         if ((mask & lab.Physics.ActiveMask & (1 << c)) != 0)
                             activity = Mathf.Max(activity, Mathf.Min(lab.Physics.Signals.Strength(lab.PrimaryCore, edge.A, c), lab.Physics.Signals.Strength(lab.PrimaryCore, edge.B, c)));

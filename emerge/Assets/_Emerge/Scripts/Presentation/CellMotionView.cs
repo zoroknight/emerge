@@ -9,6 +9,7 @@ namespace Emerge.Presentation
     {
         private CellLabController lab;
         private Material material;
+        private LineRenderer totalForce;
         private readonly Dictionary<CellView, LineRenderer[]> arrows = new Dictionary<CellView, LineRenderer[]>();
         public void Initialize(CellLabController controller, Material sharedMaterial) { lab = controller; material = sharedMaterial; }
 
@@ -31,8 +32,13 @@ namespace Emerge.Presentation
                     pair = new[] { CreateLine("推水方向"), CreateLine("反作用力方向") }; arrows.Add(cell, pair);
                 }
                 Arrow(pair[0], cell, cell.FluidDirection, new Color(0.35f, 0.75f, 1f));
-                Arrow(pair[1], cell, -cell.FluidDirection, cell.Activation > 0 ? new Color(1f, 0.7f, 0.25f) : new Color(0.65f, 0.43f, 0.2f));
+                float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) : cell.Activation;
+                Arrow(pair[1], cell, -cell.FluidDirection, Color.Lerp(new Color(0.65f, 0.43f, 0.2f), new Color(1f, 0.8f, 0.3f), activation), 0.25f + activation * 0.6f);
             }
+            if (totalForce == null) { totalForce = CreateLine("身体合力"); totalForce.sortingOrder = 5; totalForce.startWidth = totalForce.endWidth = 0.07f; }
+            var summary = CellForceSummary.Calculate(lab);
+            totalForce.enabled = summary.Force.sqrMagnitude > 0.0001f;
+            if (totalForce.enabled) DrawArrow(totalForce, summary.Center, summary.Force.normalized, Mathf.Min(2.2f, summary.Force.magnitude * 0.22f), new Color(0.85f, 0.5f, 1f));
         }
 
         private LineRenderer CreateLine(string title)
@@ -44,11 +50,16 @@ namespace Emerge.Presentation
             return line;
         }
 
-        private static void Arrow(LineRenderer line, CellView cell, Vector2 direction, Color color)
+        private static void Arrow(LineRenderer line, CellView cell, Vector2 direction, Color color, float length = 0.6f)
         {
             Vector2 center = cell.transform.position;
             Vector2 start = center + direction * cell.Definition.radius;
-            Vector2 tip = start + direction * 0.6f;
+            DrawArrow(line, start, direction, length, color);
+        }
+
+        private static void DrawArrow(LineRenderer line, Vector2 start, Vector2 direction, float length, Color color)
+        {
+            Vector2 tip = start + direction * length;
             Vector2 perpendicular = new Vector2(-direction.y, direction.x);
             line.SetPositions(new Vector3[] { start, tip, tip - direction * 0.18f + perpendicular * 0.12f, tip, tip - direction * 0.18f - perpendicular * 0.12f });
             line.startColor = line.endColor = color;

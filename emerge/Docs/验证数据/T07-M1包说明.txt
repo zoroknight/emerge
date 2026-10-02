@@ -1,0 +1,7 @@
+Artifact: Builds/Emerge-M1-Windows.zip
+Platform: Windows x64 development player
+Unity: 6000.4.7f1
+Size bytes: 84110177
+SHA256: 9C6A491EBF65926571E200AB262B5DC09EED56165611584852D053028D0AF82A
+Extracted package functional acceptance exit code: 0
+Package contents are local build output and are not tracked in Git.

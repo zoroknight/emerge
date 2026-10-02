@@ -1,0 +1,105 @@
+{
+    "timestampUtc": "2026-10-02T10:59:49.2347560Z",
+    "unity": "6000.4.7f1",
+    "failure": "",
+    "passed": true,
+    "timestep": 0.019999992102384568,
+    "trials": [
+        {
+            "example": "Straight",
+            "repeat": 1,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": 6.299999713897705,
+                "y": 5.507634455170773e-7
+            },
+            "displacement": {
+                "x": 0.8762746453285217,
+                "y": 0.0
+            },
+            "predictedTorque": -1.2636184010261787e-7,
+            "angle": 0.0
+        },
+        {
+            "example": "Turn",
+            "repeat": 1,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": 3.1500003337860109,
+                "y": -3.1500000953674318
+            },
+            "displacement": {
+                "x": 0.3874395787715912,
+                "y": -0.4791371822357178
+            },
+            "predictedTorque": -4.094999313354492,
+            "angle": -26.122589111328126
+        },
+        {
+            "example": "Reverse",
+            "repeat": 1,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": -6.299999713897705,
+                "y": 0.0
+            },
+            "displacement": {
+                "x": -0.8762746453285217,
+                "y": 0.0
+            },
+            "predictedTorque": 1.2636184010261787e-7,
+            "angle": 8.947467335929105e-7
+        },
+        {
+            "example": "Straight",
+            "repeat": 2,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": 6.299999713897705,
+                "y": 5.507634455170773e-7
+            },
+            "displacement": {
+                "x": 0.8762746453285217,
+                "y": 0.0
+            },
+            "predictedTorque": -1.2636184010261787e-7,
+            "angle": 0.0
+        },
+        {
+            "example": "Turn",
+            "repeat": 2,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": 3.1500003337860109,
+                "y": -3.1500000953674318
+            },
+            "displacement": {
+                "x": 0.3874395787715912,
+                "y": -0.4791371822357178
+            },
+            "predictedTorque": -4.094999313354492,
+            "angle": -26.122589111328126
+        },
+        {
+            "example": "Reverse",
+            "repeat": 2,
+            "cells": 3,
+            "fixedSteps": 60,
+            "predictedForce": {
+                "x": -6.299999713897705,
+                "y": 0.0
+            },
+            "displacement": {
+                "x": -0.8762746453285217,
+                "y": 0.0
+            },
+            "predictedTorque": 1.2636184010261787e-7,
+            "angle": 8.947467335929105e-7
+        }
+    ]
+}

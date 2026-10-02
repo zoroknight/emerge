@@ -15,6 +15,11 @@ namespace Emerge.Core
         public int JointCount => joints.Count;
         public int ActiveMask { get; private set; }
         public CellSignalNetwork Signals { get; } = new CellSignalNetwork();
+        public float ActivationFor(CellView cell)
+        {
+            Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
+            return cell != null && cell.Definition.kind == CellKind.Cilia ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;
+        }
         // Rigid joints avoid storing large elastic deformations in long chains under wall / flow loads.
         public const float JointFrequency = 0f;
         public IReadOnlyList<FixedJoint2D> ActiveJoints => joints;
@@ -90,7 +95,7 @@ namespace Emerge.Core
             Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
             foreach (var cell in lab.Cells)
             {
-                float intensity = cell.Definition.kind == CellKind.Cilia ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;
+                float intensity = ActivationFor(cell);
                 cell.ApplyThrust(intensity);
             }
         }
