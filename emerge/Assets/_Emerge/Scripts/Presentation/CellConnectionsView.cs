@@ -40,8 +40,8 @@ namespace Emerge.Presentation
                     lines.Add(edge, line);
                 }
                 Vector3 direction = (edge.B.transform.position - edge.A.transform.position).normalized;
-                line.SetPosition(0, edge.A.transform.position + direction * edge.A.Definition.radius * 0.82f);
-                line.SetPosition(1, edge.B.transform.position - direction * edge.B.Definition.radius * 0.82f);
+                line.SetPosition(0, edge.A.transform.position + direction * edge.A.EffectiveRadius * 0.82f);
+                line.SetPosition(1, edge.B.transform.position - direction * edge.B.EffectiveRadius * 0.82f);
                 int mask = lab.ConnectionChannels(edge);
                 Color color = new Color(0.38f, 0.42f, 0.46f);
                 for (int c = 0; c < 4; c++) if ((mask & (1 << c)) != 0) { color = ChannelColors[c]; break; }

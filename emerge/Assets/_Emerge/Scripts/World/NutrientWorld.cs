@@ -21,6 +21,23 @@ namespace Emerge.World
         public IReadOnlyList<NutrientParticle> Particles => particles;
         public float TransportedIngested { get; private set; }
         public int MembraneContacts { get; private set; }
+        public float CapturedTotal { get; private set; }
+        public int StoredCount(CellView cell)
+        { int count = 0; foreach (var p in particles) if (p.IsCaptured && p.Captor == cell) count++; return count; }
+        public float StoredFood(CellView cell)
+        { float amount = 0; foreach (var p in particles) if (p.IsCaptured && p.Captor == cell) amount += p.Remaining; return amount; }
+        public void ReleaseFrom(CellView cell)
+        { foreach (var p in particles) if (p.IsCaptured && p.Captor == cell) { p.FollowCaptor(); p.Release(); } }
+        private int FreeSlot(CellView cell)
+        {
+            for (int slot = 0; slot < cell.Definition.foodSlots; slot++)
+            {
+                bool occupied = false;
+                foreach (var p in particles) if (p.IsCaptured && p.Captor == cell && p.CaptureSlot == slot) { occupied = true; break; }
+                if (!occupied) return slot;
+            }
+            return -1;
+        }
         public void Initialize(CellLabController controller, NutrientParticle template, LocalFlowSettings settings, Camera camera)
         {
             lab = controller; prefab = template;
@@ -61,6 +78,7 @@ namespace Emerge.World
             particles.Clear();
             TransportedIngested = 0;
             MembraneContacts = 0;
+            CapturedTotal = 0;
         }
         public Vector2 FlowVelocityAt(Vector2 point, bool preview = false, float previewSupply = 1)
         {
@@ -87,6 +105,7 @@ namespace Emerge.World
             Vector2 max = worldCamera.ViewportToWorldPoint(new Vector3(1, CellLabController.ArenaTop, -worldCamera.transform.position.z));
             foreach (var particle in particles)
             {
+                if (particle.IsCaptured) { particle.FollowCaptor(); continue; }
                 Vector2 previous = particle.transform.position;
                 Vector2 velocity = FlowVelocityAt(previous);
                 Vector2 next = MembraneTransport.Move(lab.Cells, previous, velocity * dt, out int contacts);
@@ -132,13 +151,45 @@ namespace Emerge.World
         }
         public void Capture(float dt, HashSet<CellView> connected)
         {
+            foreach (var p in particles)
+                if (p.IsCaptured)
+                {
+                    if (p.Captor == null || !p.Captor.gameObject.activeInHierarchy) p.Release();
+                    else { p.Age(dt); p.FollowCaptor(); }
+                }
+            // A dedicated absorber gets first claim; the core fallback cannot nibble its new catch.
+            for (int phase = 0; phase < 2; phase++)
             foreach (var cell in connected)
             {
+                if ((cell.Definition.kind == CellKind.Absorber) != (phase == 0)) continue;
                 float budget = cell.Definition.absorptionRate * dt;
+                if (cell.Definition.kind == CellKind.Absorber)
+                {
+                    // Existing stored particles digest before any new capture: no same-tick reward.
+                    int ready = 0;
+                    foreach (var p in particles)
+                        if (p.IsCaptured && p.Captor == cell && p.Remaining > 0 && p.DigestionAge >= cell.Definition.digestionDelay) ready++;
+                    float share = ready > 0 ? budget / ready : 0;
+                    foreach (var p in particles)
+                    {
+                        if (!p.IsCaptured || p.Captor != cell || p.DigestionAge < cell.Definition.digestionDelay || budget <= 0) continue;
+                        float amount = Mathf.Min(share, p.Remaining, lab.Metabolism.Settings.nutrientCapacity - lab.Metabolism.Nutrients);
+                        float eaten = p.Consume(amount); lab.Metabolism.Receive(eaten); budget -= eaten;
+                        if (p.TravelDistance > 0.1f) TransportedIngested += eaten;
+                    }
+                    int slots = StoredCount(cell); float stored = StoredFood(cell);
+                    foreach (var p in particles)
+                    {
+                        if (p.IsCaptured || p.Remaining <= 0 || slots >= cell.Definition.foodSlots || stored + p.Remaining > cell.Definition.foodCapacity + 0.00001f) continue;
+                        if (Vector2.Distance(cell.Body.worldCenterOfMass, p.transform.position) > cell.Definition.radius + NutrientParticle.Radius) continue;
+                        p.Capture(cell, FreeSlot(cell)); slots++; stored += p.Remaining; CapturedTotal += p.Remaining;
+                    }
+                    continue;
+                }
                 foreach (var particle in particles)
                 {
                     if (budget <= 0 || lab.Metabolism.Nutrients >= lab.Metabolism.Settings.nutrientCapacity) break;
-                    if (particle.Remaining <= 0 || Vector2.Distance(cell.Body.worldCenterOfMass, particle.transform.position) > cell.Definition.radius + NutrientParticle.Radius) continue;
+                    if (particle.IsCaptured || particle.Remaining <= 0 || Vector2.Distance(cell.Body.worldCenterOfMass, particle.transform.position) > cell.Definition.radius + NutrientParticle.Radius) continue;
                     float amount = Mathf.Min(budget, particle.Remaining, lab.Metabolism.Settings.nutrientCapacity - lab.Metabolism.Nutrients);
                     float eaten = particle.Consume(amount); lab.Metabolism.Receive(eaten); budget -= eaten;
                     if (particle.TravelDistance > 0.1f) TransportedIngested += eaten;

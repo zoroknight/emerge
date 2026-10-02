@@ -12,13 +12,16 @@ namespace Emerge.Core
         private readonly InputAction[] intents = new InputAction[4];
         private readonly float[] strengths = new float[4];
         private readonly List<FixedJoint2D> joints = new List<FixedJoint2D>();
-        public int JointCount => joints.Count;
+        private readonly List<DistanceJoint2D> contractionJoints = new List<DistanceJoint2D>();
+        private readonly List<CellConnection> contractionEdges = new List<CellConnection>();
+        public IReadOnlyList<DistanceJoint2D> ContractionJoints => contractionJoints;
+        public int JointCount => joints.Count + contractionJoints.Count;
         public int ActiveMask { get; private set; }
         public CellSignalNetwork Signals { get; } = new CellSignalNetwork();
         public float ActivationFor(CellView cell)
         {
             Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
-            return cell != null && cell.Definition.kind == CellKind.Cilia ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;
+            return cell != null && (cell.Definition.kind == CellKind.Cilia || cell.Definition.kind == CellKind.Contractor) ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;
         }
         // Rigid joints avoid storing large elastic deformations in long chains under wall / flow loads.
         public const float JointFrequency = 0f;
@@ -60,6 +63,15 @@ namespace Emerge.Core
             Physics2D.SyncTransforms();
             foreach (var edge in lab.Graph.Edges)
             {
+                if (edge.A.Definition.kind == CellKind.Contractor || edge.B.Definition.kind == CellKind.Contractor)
+                {
+                    var distance = edge.A.gameObject.AddComponent<DistanceJoint2D>();
+                    distance.autoConfigureConnectedAnchor = false; distance.autoConfigureDistance = false;
+                    distance.connectedBody = edge.B.Body; distance.anchor = distance.connectedAnchor = Vector2.zero;
+                    distance.enableCollision = false; distance.maxDistanceOnly = false;
+                    distance.distance = edge.A.EffectiveRadius + edge.B.EffectiveRadius;
+                    contractionJoints.Add(distance); contractionEdges.Add(edge); continue;
+                }
                 Vector3 point = Vector3.Lerp(edge.A.transform.position, edge.B.transform.position,
                     edge.A.Definition.radius / (edge.A.Definition.radius + edge.B.Definition.radius));
                 var joint = edge.A.gameObject.AddComponent<FixedJoint2D>();
@@ -81,6 +93,8 @@ namespace Emerge.Core
                 joint.enabled = false; Destroy(joint);
             }
             joints.Clear();
+            foreach (var joint in contractionJoints) { if (joint == null) continue; joint.enabled = false; Destroy(joint); }
+            contractionJoints.Clear(); contractionEdges.Clear();
             if (lab != null) foreach (var cell in lab.Cells) if (cell != null && cell.Body != null) cell.SetSimulation(false);
         }
 
@@ -98,13 +112,17 @@ namespace Emerge.Core
             lab.Food.Capture(Time.fixedDeltaTime, connected);
             if (lab.PrimaryCore != null) lab.Metabolism.Step(Time.fixedDeltaTime, requested, connected.Count);
             foreach (var cell in lab.Cells) cell.ApplyThrust(ActivationFor(cell) * lab.Metabolism.SupplyRatio);
+            foreach (var cell in lab.Cells) cell.StepContraction(cell.Activation, Time.fixedDeltaTime);
+            for (int i = 0; i < contractionJoints.Count; i++)
+                contractionJoints[i].distance = contractionEdges[i].A.EffectiveRadius + contractionEdges[i].B.EffectiveRadius;
             lab.Food.Advect(Time.fixedDeltaTime);
         }
 
         public float RequestedEnergyRate()
         {
             float rate = 0;
-            foreach (var cell in lab.Cells) rate += ActivationFor(cell) * lab.Metabolism.Settings.ciliaCost;
+            foreach (var cell in lab.Cells) rate += ActivationFor(cell) *
+                (cell.Definition.kind == CellKind.Contractor ? lab.Metabolism.Settings.contractionCost : lab.Metabolism.Settings.ciliaCost);
             return rate;
         }
 

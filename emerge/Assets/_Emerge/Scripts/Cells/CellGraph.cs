@@ -66,7 +66,7 @@ namespace Emerge.Cells
             if (HasEdge(a, b)) { reason = "这两个细胞已经连接。"; return false; }
             if (Degree(a) >= a.Definition.maxConnections || Degree(b) >= b.Definition.maxConnections)
             { reason = "连接数量已达上限。"; return false; }
-            float expected = a.Definition.radius + b.Definition.radius;
+            float expected = a.EffectiveRadius + b.EffectiveRadius;
             float distance = Vector2.Distance(a.transform.position, b.transform.position);
             if (distance < expected - 0.01f) { reason = "细胞重叠，无法连接。"; return false; }
             if (distance > expected + 0.06f) { reason = "细胞太远，请拖到圆周接触处。"; return false; }

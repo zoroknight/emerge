@@ -116,6 +116,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return CellStomachContractionSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellStomachContractionSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -134,7 +140,7 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T10_PASS: membrane transport acceptance and T01-T09 regression.");
+                    Debug.Log("CELL_LAB_T12_PASS: stomach capture, contraction acceptance and T01-T10 regression; T11 deferred.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }

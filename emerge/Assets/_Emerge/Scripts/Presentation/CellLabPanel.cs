@@ -18,6 +18,7 @@ namespace Emerge.Presentation
         public Button CiliaButton { get; private set; }
         public Button AbsorberButton { get; private set; }
         public Button MembraneButton { get; private set; }
+        public Button ContractorButton { get; private set; }
         private Button membraneTrialButton;
         public Button FoodButton { get; private set; }
         private Text resources;
@@ -80,6 +81,9 @@ namespace Emerge.Presentation
             deleteButton = MakeButton(bar.transform, "删除 [Delete]", 980, lab.DeleteSelected);
             disconnectButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(800, -108);
             deleteButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(980, -108);
+            deleteButton.GetComponent<RectTransform>().sizeDelta = new Vector2(135, 40);
+            ContractorButton = MakeButton(bar.transform, "添加收缩 [0]", 1130, lab.SpawnContractor, 126);
+            ContractorButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(1130, -108);
             var footer = new GameObject("Footer", typeof(RectTransform), typeof(Image));
             footer.transform.SetParent(canvasObject.transform, false);
             var footerRect = footer.GetComponent<RectTransform>();
@@ -114,7 +118,11 @@ namespace Emerge.Presentation
                     "  |  " + (lab.IsEditing ? "预览：" : "响应：") +
                     (lab.IsEditing && lab.Physics != null ? lab.Physics.ActivationFor(lab.Selected) * lab.Physics.PreviewSupply() : lab.Selected.Activation).ToString("0.00") : "");
             if (lab.Selected != null && lab.Selected.Definition.absorptionRate > 0)
-                details.text += "  |  摄食 " + lab.Selected.Definition.absorptionRate.ToString("0.00") + "/秒";
+                details.text += "  |  消化 " + lab.Selected.Definition.absorptionRate.ToString("0.00") + "/秒" +
+                    (lab.Selected.Definition.kind == CellKind.Absorber ? "  |  胃内 " + lab.Food.StoredCount(lab.Selected) + " 颗" : "");
+            if (lab.Selected != null && lab.Selected.Definition.kind == CellKind.Contractor)
+                details.text += "  |  收缩 " + lab.Selected.Contraction.ToString("P0") +
+                    "  |  " + (lab.IsEditing ? "信号预览 " + lab.Physics.ActivationFor(lab.Selected).ToString("P0") : "响应 " + lab.Selected.Activation.ToString("P0"));
             if (lab.Selected != null && lab.Selected.Definition.kind == CellKind.Membrane)
                 details.text += "  |  膜片被动阻挡";
             if (lab.Metabolism != null)
@@ -125,8 +133,9 @@ namespace Emerge.Presentation
                 resources.text = "营养 " + state.Nutrients.ToString("0.00") + "/" + data.nutrientCapacity +
                     "  ·  能量 " + state.Energy.ToString("0.00") + "/" + data.energyCapacity +
                     "  ·  供能 " + (requested > 0 ? supply.ToString("P0") : "无活动需求") +
-                    "  ·  累计摄食 " + state.Ingested.ToString("0.00") + "  ·  代谢产能 " + state.ProductionRate.ToString("0.00") + "/秒" +
-                    "  ·  推进耗能 " + (requested * supply).ToString("0.00") + "/秒  ·  颗粒 " + (lab.Food != null ? lab.Food.Particles.Count : 0) + "/40";
+                    "  ·  捕获 " + (lab.Food != null ? lab.Food.CapturedTotal : 0).ToString("0.00") + " / 消化 " + state.Ingested.ToString("0.00") +
+                    "  ·  产能 " + state.ProductionRate.ToString("0.00") + "/秒" +
+                    "  ·  活动耗能 " + (requested * supply).ToString("0.00") + "/秒  ·  颗粒 " + (lab.Food != null ? lab.Food.Particles.Count : 0) + "/40";
                 resources.color = requested > 0 && supply < 0.2f ? new Color(1, 0.65f, 0.35f) : new Color(0.75f, 0.95f, 0.78f);
             }
             var edge = lab.SelectedConnection;
@@ -157,15 +166,15 @@ namespace Emerge.Presentation
                     "(" + force.Force.x.ToString("0.00") + ", " + force.Force.y.ToString("0.00") + ")") +
                     " · " + turn + " " + Mathf.Abs(force.Torque).ToString("0.00");
             }
-            CoreButton.interactable = CiliaButton.interactable = AbsorberButton.interactable = MembraneButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
+            CoreButton.interactable = CiliaButton.interactable = AbsorberButton.interactable = MembraneButton.interactable = ContractorButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
             FoodButton.interactable = lab.PrimaryCore != null && lab.Food != null && lab.Food.Particles.Count < Emerge.World.NutrientWorld.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
             ExampleButton.interactable = lab.IsEditing && lab.Capacity >= 3;
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例 | 4 吸收 | 8 膜 | 9 膜对照 | 6 流场\n5 近处营养、7 滤食营养；只配置核心出口。白色膜片被动阻挡，Tab 游动才推动颗粒、摄食和代谢。" :
-                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n缺能后摄食可恢复。5 投放近处营养，7 投放滤食营养，6 切换流场；蓝箭头推水，橙箭头为反作用力。";
+            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例 | 4 吸收 | 8 膜 | 9 膜对照 | 0 收缩 | C 收缩示例\n5 近处营养、7 滤食营养、6 流场；只配置核心出口。吸收先捕获后消化，收缩细胞按信号缩短相邻连接。" :
+                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n吸收细胞内绿色颗粒逐渐消化；收缩示例按 A 缩短、松开复原。5 近处营养，7 滤食营养，6 水流显示。";
         }
 
         private string ReceivedSignals(CellView cell)

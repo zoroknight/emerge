@@ -21,3 +21,8 @@ MonoBehaviour:
   thrust: 0
   signalRetention: 0.9
   absorptionRate: 0.08
+  foodCapacity: 8
+  foodSlots: 16
+  digestionDelay: 0.3
+  contractedSize: 0.55
+  contractionSpeed: 1

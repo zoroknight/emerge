@@ -13,6 +13,14 @@ namespace Emerge.Cells
         public Rigidbody2D Body { get; private set; }
         public Vector2 LastForce { get; private set; }
         public float Activation { get; private set; }
+        public float Contraction { get; private set; }
+        public float EffectiveRadius => definition.radius * (1 - (1 - definition.contractedSize) * Contraction);
+        public void StepContraction(float activation, float dt)
+        {
+            if (definition.kind != CellKind.Contractor) return;
+            Contraction = Mathf.MoveTowards(Contraction, Mathf.Clamp01(activation), definition.contractionSpeed * dt);
+            transform.localScale = Vector3.one * EffectiveRadius * 2;
+        }
         public Vector2 FluidDirection => transform.right;
 
         public void Initialize(CellDefinition data)

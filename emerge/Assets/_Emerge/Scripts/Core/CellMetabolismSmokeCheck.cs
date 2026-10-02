@@ -76,7 +76,8 @@ namespace Emerge.Core
                 var absorber = Absorber(lab);
                 particle = lab.Food.Spawn(absorber.Body.worldCenterOfMass + Vector2.right * (absorber.Definition.radius + 0.03f), 2);
                 Steps(lab, 50); report.absorberIngested = lab.Metabolism.Ingested;
-                Check(Mathf.Abs(report.absorberIngested - 1.5f) < 0.001f && report.absorberIngested > report.coreIngested * 10, "Absorber was not an efficient contact collector");
+                Check(Mathf.Abs(report.absorberIngested - 1.5f * (1 - absorber.Definition.digestionDelay)) < 0.031f &&
+                    particle.IsCaptured && report.absorberIngested > report.coreIngested * 10, "Delayed absorber digestion failed");
                 Check(Mathf.Abs(particle.Remaining + report.absorberIngested - 2) < 0.001f, "Absorber double-counted food");
                 Ledger(lab.Metabolism, 0, 0, report);
 

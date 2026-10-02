@@ -37,6 +37,8 @@ namespace Emerge.Editor
             bool newMembrane = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/MembraneCell.prefab") == null;
             CellView membraneView = Prefab(membrane, circle, ring, star, material);
             if (newMembrane) ConfigureMembraneSurface(membraneView, strip, circle, material);
+            var contractor = Definition("Contractor", CellKind.Contractor, 0.7f, new Color(0.92f, 0.48f, 0.62f));
+            Prefab(contractor, circle, ring, star, material);
             ProvisionMetabolism(); ProvisionNutrient(circle, material);
             SceneEnvironmentSetup.EnsurePrefabs();
             string flowPath = Root + "Data/LocalFlow.asset";
@@ -66,6 +68,8 @@ namespace Emerge.Editor
             var settings = new SerializedObject(lab);
             settings.FindProperty("membrane").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Membrane.asset");
             settings.FindProperty("membranePrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/MembraneCell.prefab").GetComponent<CellView>();
+            settings.FindProperty("contractor").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Contractor.asset");
+            settings.FindProperty("contractorPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/ContractorCell.prefab").GetComponent<CellView>();
             settings.FindProperty("absorber").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Absorber.asset");
             settings.FindProperty("absorberPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/AbsorberCell.prefab").GetComponent<CellView>();
             settings.FindProperty("metabolismSettings").objectReferenceValue = AssetDatabase.LoadAssetAtPath<MetabolismSettings>(Root + "Data/Metabolism.asset");
@@ -116,7 +120,7 @@ namespace Emerge.Editor
         }
 
         private static string CellName(CellKind kind) => kind == CellKind.Core ? "核心细胞" :
-            kind == CellKind.Cilia ? "纤毛细胞" : kind == CellKind.Membrane ? "膜细胞" : "吸收细胞";
+            kind == CellKind.Cilia ? "纤毛细胞" : kind == CellKind.Membrane ? "膜细胞" : kind == CellKind.Contractor ? "收缩细胞" : "吸收细胞";
 
         private static Sprite CreateSprite(string name, int shape)
         {
@@ -184,6 +188,10 @@ namespace Emerge.Editor
                 Part(obj.transform, "Membrane surface", circle, material, Vector2.zero,
                     new Vector2(MembraneTransport.HalfThickness / definition.radius / 0.47f, 1.064f), new Color(0.93f, 0.82f, 1), 3);
             }
+            if (definition.kind == CellKind.Contractor)
+                for (int i = 0; i < 3; i++)
+                    Part(obj.transform, "Contractile stripe " + i, circle, material, new Vector2((i - 1) * 0.2f, 0),
+                        new Vector2(0.07f, 0.7f), new Color(1, 0.83f, 0.9f), 2);
             var fields = new SerializedObject(view);
             fields.FindProperty("body").objectReferenceValue = body;
             fields.FindProperty("selection").objectReferenceValue = selection.gameObject;

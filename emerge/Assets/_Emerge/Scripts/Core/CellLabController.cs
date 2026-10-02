@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace Emerge.Core
 {
     public enum LabMode { Edit, Swim }
-    public enum LabExample { Straight, Turn, Reverse, Feeding, Filter, Membrane }
+    public enum LabExample { Straight, Turn, Reverse, Feeding, Filter, Membrane, Contraction }
 
     public sealed class CellLabController : MonoBehaviour
     {
@@ -19,6 +19,8 @@ namespace Emerge.Core
         [SerializeField] private CellView absorberPrefab;
         [SerializeField] private CellDefinition membrane;
         [SerializeField] private CellView membranePrefab;
+        [SerializeField] private CellDefinition contractor;
+        [SerializeField] private CellView contractorPrefab;
         private GameObject membraneTrialFlow;
         private int membraneTrialIndex = -1;
         [SerializeField] private MetabolismSettings metabolismSettings;
@@ -56,6 +58,7 @@ namespace Emerge.Core
         public CellDefinition CiliaDefinition => cilia;
         public CellDefinition AbsorberDefinition => absorber;
         public CellDefinition MembraneDefinition => membrane;
+        public CellDefinition ContractorDefinition => contractor;
         public MetabolismState Metabolism { get; private set; }
         public NutrientWorld Food { get; private set; }
         public bool ShowFlow { get; private set; } = true;
@@ -100,6 +103,19 @@ namespace Emerge.Core
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
         public void SpawnAbsorber() => Spawn(absorber, absorberPrefab);
         public void SpawnMembrane() => Spawn(membrane, membranePrefab);
+        public void SpawnContractor() => Spawn(contractor, contractorPrefab);
+        public void LoadContractionExample()
+        {
+            if (!IsEditing) return;
+            ClearLab(); SpawnCore(); SpawnContractor(); SpawnAbsorber();
+            cells[1].transform.position = new Vector3(0, -1, 0);
+            cells[0].transform.position = cells[1].transform.position + Vector3.left * (core.radius + contractor.radius);
+            cells[2].transform.position = cells[1].transform.position + Vector3.right * (contractor.radius + absorber.radius);
+            Connect(cells[0], cells[1]); Connect(cells[1], cells[2]);
+            Graph.ConfigureCoreChannel(Graph.Edges[0], PrimaryCore, IntentChannel.A);
+            Select(cells[1]); Metabolism.Reset(2, 8);
+            SetMessage("收缩示例：Tab 游动，按住 A 缩短两侧连接，松开复原；W 无响应。收缩耗能，0 添加收缩细胞。");
+        }
         public void LoadNextMembraneTrial()
         {
             if (!IsEditing) return;
@@ -141,7 +157,7 @@ namespace Emerge.Core
         public void LoadNextExample()
         {
             if (!IsEditing) return;
-            exampleIndex = (exampleIndex + 1) % 6;
+            exampleIndex = (exampleIndex + 1) % 7;
             LoadExample((LabExample)exampleIndex);
         }
 
@@ -149,6 +165,7 @@ namespace Emerge.Core
         {
             if (!IsEditing || capacity < 3) return;
             if (example == LabExample.Membrane) { LoadMembraneTrial(0); return; }
+            if (example == LabExample.Contraction) { LoadContractionExample(); return; }
             if (example == LabExample.Filter)
             {
                 if (capacity < 4) { SetMessage("滤食示例需要四个细胞的容量。"); return; }
@@ -205,8 +222,8 @@ namespace Emerge.Core
         public CellView CreateStressCell(CellKind kind, Vector3 position, float rotation)
         {
             if (!IsEditing || cells.Count >= capacity) throw new System.InvalidOperationException("压力测试节点数量无效。");
-            var data = kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : kind == CellKind.Membrane ? membrane : absorber;
-            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : kind == CellKind.Membrane ? membranePrefab : absorberPrefab;
+            var data = kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : kind == CellKind.Membrane ? membrane : kind == CellKind.Contractor ? contractor : absorber;
+            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : kind == CellKind.Membrane ? membranePrefab : kind == CellKind.Contractor ? contractorPrefab : absorberPrefab;
             var cell = Instantiate(prefab, position, Quaternion.Euler(0, 0, rotation), cellsRoot);
             cell.Initialize(data); cell.name = "压力样本 " + cells.Count;
             cell.Body.interpolation = RigidbodyInterpolation2D.None;
@@ -329,7 +346,7 @@ namespace Emerge.Core
         {
             if (!IsEditing || dragged == null) return;
             Vector3 position = pointer + dragOffset;
-            float radius = dragged.Definition.radius;
+            float radius = dragged.EffectiveRadius;
             Vector3 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
             Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, ArenaTop, -worldCamera.transform.position.z));
             position.x = Mathf.Clamp(position.x, min.x + radius, max.x - radius);
@@ -380,6 +397,7 @@ namespace Emerge.Core
             if (!IsEditing || selected == null) return;
             EndDrag(false);
             var cell = selected;
+            Food.ReleaseFrom(cell);
             Graph.Disconnect(cell); cells.Remove(cell);
             if (cell == PrimaryCore)
             {
@@ -396,7 +414,7 @@ namespace Emerge.Core
             foreach (var other in cells)
             {
                 if (ignored != null && ignored.Contains(other)) continue;
-                if (Vector2.Distance(position, other.transform.position) < radius + other.Definition.radius - 0.01f) return false;
+                if (Vector2.Distance(position, other.transform.position) < radius + other.EffectiveRadius - 0.01f) return false;
             }
             return true;
         }
@@ -408,7 +426,7 @@ namespace Emerge.Core
             foreach (var cell in group)
             {
                 Vector3 position = cell.transform.position + delta;
-                float r = cell.Definition.radius;
+                float r = cell.EffectiveRadius;
                 if (position.x < min.x + r || position.x > max.x - r || position.y < min.y + r || position.y > max.y - r) return false;
                 if (!Fits(r, position, group)) return false;
             }
@@ -423,14 +441,14 @@ namespace Emerge.Core
                 foreach (var other in cells)
                 {
                     if (dragGroup.Contains(other)) continue;
-                    float gap = Mathf.Abs(Vector2.Distance(member.transform.position, other.transform.position) - member.Definition.radius - other.Definition.radius);
+                    float gap = Mathf.Abs(Vector2.Distance(member.transform.position, other.transform.position) - member.EffectiveRadius - other.EffectiveRadius);
                     if (gap < closest) { closest = gap; from = member; to = other; }
                 }
             if (from == null) { SetMessage("位置已保存；靠近圆周接触处可连接。"); return; }
             if (Graph.Degree(from) >= from.Definition.maxConnections || Graph.Degree(to) >= to.Definition.maxConnections)
             { SetMessage("连接数量已达上限，未吸附。"); return; }
             Vector3 direction = (from.transform.position - to.transform.position).normalized;
-            Vector3 target = to.transform.position + direction * (from.Definition.radius + to.Definition.radius);
+            Vector3 target = to.transform.position + direction * (from.EffectiveRadius + to.EffectiveRadius);
             Vector3 delta = target - from.transform.position;
             if (!GroupFits(dragGroup, delta)) { SetMessage("吸附被阻止：会造成重叠或超出操作区域。"); return; }
             foreach (var cell in dragGroup) cell.transform.position += delta;
@@ -462,6 +480,8 @@ namespace Emerge.Core
                 if (keyboard.digit7Key.wasPressedThisFrame) Food.SeedFilterPatch();
                 if (keyboard.digit8Key.wasPressedThisFrame) SpawnMembrane();
                 if (keyboard.digit9Key.wasPressedThisFrame) LoadNextMembraneTrial();
+                if (keyboard.digit0Key.wasPressedThisFrame) SpawnContractor();
+                if (keyboard.cKey.wasPressedThisFrame) LoadContractionExample();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();
@@ -480,7 +500,7 @@ namespace Emerge.Core
             if (overUI || !mouse.leftButton.wasPressedThisFrame) return;
             CellView hit = null;
             for (int i = cells.Count - 1; i >= 0; i--)
-                if (Vector2.Distance(pointer, cells[i].transform.position) <= cells[i].Definition.radius)
+                if (Vector2.Distance(pointer, cells[i].transform.position) <= cells[i].EffectiveRadius)
                 { hit = cells[i]; break; }
             if (keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed))
             { Connect(selected, hit); return; }

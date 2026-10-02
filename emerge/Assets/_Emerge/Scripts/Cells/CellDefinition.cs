@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Emerge.Cells
 {
-    public enum CellKind { Core, Cilia, Absorber, Membrane }
+    public enum CellKind { Core, Cilia, Absorber, Membrane, Contractor }
     public enum IntentChannel { W, A, S, D }
 
     [CreateAssetMenu(menuName = "Emerge/Cell Definition")]
@@ -17,5 +17,10 @@ namespace Emerge.Cells
         [Min(0)] public float thrust = 3.5f;
         [Range(0, 1)] public float signalRetention = 0.9f;
         [Min(0)] public float absorptionRate;
+        [Min(0.4f)] public float foodCapacity = 8;
+        [Range(1, 32)] public int foodSlots = 16;
+        [Min(0.02f)] public float digestionDelay = 0.3f;
+        [Range(0.4f, 1)] public float contractedSize = 0.55f;
+        [Min(0.1f)] public float contractionSpeed = 1;
     }
 }
