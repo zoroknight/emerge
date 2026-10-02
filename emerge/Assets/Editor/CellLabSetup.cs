@@ -59,6 +59,7 @@ namespace Emerge.Editor
             settings.FindProperty("worldCamera").objectReferenceValue = Camera.main;
             settings.FindProperty("panel").objectReferenceValue = panel;
             settings.FindProperty("connectionMaterial").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            settings.FindProperty("inputControls").objectReferenceValue = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(Root + "Data/EmergeControls.inputactions");
             settings.ApplyModifiedPropertiesWithoutUndo();
             Camera.main.orthographicSize = 6f;
             EditorSceneManager.SaveScene(scene);
@@ -80,13 +81,14 @@ namespace Emerge.Editor
             if (data != null)
             {
                 data.displayName = kind == CellKind.Core ? "核心细胞" : "纤毛细胞";
-                data.maxConnections = kind == CellKind.Core ? 6 : 4;
                 EditorUtility.SetDirty(data);
                 return data;
             }
             data = ScriptableObject.CreateInstance<CellDefinition>();
             data.kind = kind; data.displayName = kind == CellKind.Core ? "核心细胞" : "纤毛细胞"; data.radius = radius; data.bodyColor = color;
             data.maxConnections = kind == CellKind.Core ? 6 : 4;
+            data.mass = kind == CellKind.Core ? 1.4f : 1f;
+            data.thrust = kind == CellKind.Core ? 0 : 3.5f;
             AssetDatabase.CreateAsset(data, path);
             return data;
         }

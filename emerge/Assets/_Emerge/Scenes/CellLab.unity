@@ -307,6 +307,7 @@ MonoBehaviour:
   worldCamera: {fileID: 519420031}
   panel: {fileID: 549435914}
   connectionMaterial: {fileID: 2100000, guid: f3fd77126cbddab45a833206a17fed77, type: 2}
+  inputControls: {fileID: -944628639613478452, guid: 09cd9c1903203674b98757322b5d52c7, type: 3}
   capacity: 20
 --- !u!4 &549435916
 Transform:

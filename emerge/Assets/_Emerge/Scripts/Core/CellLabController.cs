@@ -19,6 +19,7 @@ namespace Emerge.Core
         [SerializeField] private Camera worldCamera;
         [SerializeField] private CellLabPanel panel;
         [SerializeField] private Material connectionMaterial;
+        [SerializeField] private InputActionAsset inputControls;
         [SerializeField, Range(2, 30)] private int capacity = 20;
 
         private readonly List<CellView> cells = new List<CellView>();
@@ -37,6 +38,7 @@ namespace Emerge.Core
         public int Capacity => capacity;
         public CellView Selected => selected;
         public CellLabPanel Panel => panel;
+        public CellLabPhysics Physics { get; private set; }
 
         private void Start()
         {
@@ -44,6 +46,11 @@ namespace Emerge.Core
             var connections = new GameObject("连接显示").AddComponent<CellConnectionsView>();
             connections.transform.SetParent(transform, false);
             connections.Initialize(this, connectionMaterial);
+            Physics = gameObject.AddComponent<CellLabPhysics>();
+            Physics.Initialize(this, inputControls, connectionMaterial, worldCamera);
+            var motion = new GameObject("纤毛方向显示").AddComponent<CellMotionView>();
+            motion.transform.SetParent(transform, false);
+            motion.Initialize(this, connectionMaterial);
             ResetLab();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-smoke") >= 0)
@@ -89,6 +96,7 @@ namespace Emerge.Core
         {
             if (!IsEditing) return;
             EndDrag(false);
+            Physics?.StopSimulation();
             Graph.Clear();
             PrimaryCore = null;
             selected = null;
@@ -114,7 +122,15 @@ namespace Emerge.Core
         {
             EndDrag(false);
             Mode = IsEditing ? LabMode.Swim : LabMode.Edit;
+            if (IsEditing) Physics.StopSimulation(); else Physics.StartSimulation();
             panel.Refresh();
+        }
+
+        public void CycleChannel()
+        {
+            if (!IsEditing || selected == null || selected.Definition.kind != CellKind.Cilia) return;
+            selected.SetChannel((IntentChannel)(((int)selected.Channel + 1) % 4));
+            SetMessage("纤毛响应通道已改为 " + selected.Channel + "；按键含义由朝向和布局决定。");
         }
 
         public void BeginDrag(CellView cell, Vector3 pointer)
@@ -242,7 +258,7 @@ namespace Emerge.Core
         }
 
         private void OnApplicationFocus(bool focused) { if (!focused) EndDrag(false); }
-        private void OnDisable() => EndDrag(false);
+        private void OnDisable() { EndDrag(false); Physics?.StopSimulation(); }
 
         private void Update()
         {
@@ -255,11 +271,13 @@ namespace Emerge.Core
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();
+                if (keyboard.cKey.wasPressedThisFrame) CycleChannel();
                 if (keyboard.escapeKey.wasPressedThisFrame && !Application.isEditor) Application.Quit();
                 float direction = (keyboard.eKey.isPressed ? 1 : 0) - (keyboard.qKey.isPressed ? 1 : 0);
                 if (direction != 0) RotateSelected(-direction * 90f * Time.deltaTime);
             }
             Mouse mouse = Mouse.current;
+            panel.Refresh();
             if (mouse == null) return;
             if (mouse.leftButton.wasReleasedThisFrame || !mouse.leftButton.isPressed) EndDrag();
             bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();

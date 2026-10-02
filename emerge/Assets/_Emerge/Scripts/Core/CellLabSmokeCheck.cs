@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T03_CHECK_START");
+            Debug.Log("CELL_LAB_T04_CHECK_START");
             string failure = null;
             try
             {
@@ -72,6 +72,11 @@ namespace Emerge.Core
                 lab.ResetLab();
             }
             catch (Exception exception) { failure = exception.ToString(); }
+            if (failure == null)
+            {
+                yield return CellPhysicsSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellPhysicsSmokeCheck.Failure;
+            }
             yield return null;
             if (failure == null)
             {
@@ -92,11 +97,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T03_PASS: T01/T02 regression, Chinese UI, graph checks, reset and cleanup.");
+                    Debug.Log("CELL_LAB_T04_PASS: T01/T02/T03 regression, input-driven physics and cleanup.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T03_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T04_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 

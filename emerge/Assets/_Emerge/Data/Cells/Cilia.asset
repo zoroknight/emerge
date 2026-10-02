@@ -17,3 +17,5 @@ MonoBehaviour:
   radius: 0.58
   bodyColor: {r: 0.57, g: 0.73, b: 0.92, a: 1}
   maxConnections: 4
+  mass: 1
+  thrust: 3.5
