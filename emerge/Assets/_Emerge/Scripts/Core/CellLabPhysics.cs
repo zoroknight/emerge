@@ -98,6 +98,7 @@ namespace Emerge.Core
             lab.Food.Capture(Time.fixedDeltaTime, connected);
             if (lab.PrimaryCore != null) lab.Metabolism.Step(Time.fixedDeltaTime, requested, connected.Count);
             foreach (var cell in lab.Cells) cell.ApplyThrust(ActivationFor(cell) * lab.Metabolism.SupplyRatio);
+            lab.Food.Advect(Time.fixedDeltaTime);
         }
 
         public float RequestedEnergyRate()

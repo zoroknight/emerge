@@ -154,8 +154,8 @@ namespace Emerge.Presentation
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例（替换身体）| 4 吸收 | 5 投放营养\n只配置核心出口，后续跟随；编辑按 WASD 预览（不耗能），Tab 游动才摄食与代谢。紫箭头为主动合力。" :
-                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n缺能时推进减弱或停工；接触营养后经吸收、代谢恢复。5 投放实验营养，Tab 返回编辑暂停模拟。";
+            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例 | 4 吸收 | 5 近处营养 | 7 滤食营养 | 6 流场\n只配置核心出口，后续跟随；WASD 预览不耗能，Tab 游动才推动颗粒、摄食和代谢。紫箭头为合力。" :
+                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n缺能后摄食可恢复。5 投放近处营养，7 投放滤食营养，6 切换流场；蓝箭头推水，橙箭头为反作用力。";
         }
 
         private string ReceivedSignals(CellView cell)

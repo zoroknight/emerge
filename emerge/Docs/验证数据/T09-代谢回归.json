@@ -1,0 +1,20 @@
+{
+    "timestampUtc": "2026-10-02T13:08:43.2568767Z",
+    "unity": "6000.4.7f1",
+    "failure": "",
+    "passed": true,
+    "unlimitedEnergy": false,
+    "coreIngested": 0.07999997586011887,
+    "absorberIngested": 1.499998927116394,
+    "starvationEnergy": 0.0,
+    "starvationSupply": 0.0,
+    "recoveryIngested": 0.9299994707107544,
+    "recoverySupply": 1.0,
+    "recoveryForce": 3.1499998569488527,
+    "recoveryDistance": 0.3280266523361206,
+    "ledgerMaxError": 4.917383193969727e-7,
+    "rationA": 0.007809525355696678,
+    "rationB": 0.007809525355696678,
+    "starvationMaxSupplyDrop": 0.05835223197937012,
+    "particleLimit": 40
+}

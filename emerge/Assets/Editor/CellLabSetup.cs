@@ -33,6 +33,9 @@ namespace Emerge.Editor
             var absorber = Definition("Absorber", CellKind.Absorber, 0.65f, new Color(0.9f, 0.65f, 0.43f));
             var absorberPrefab = Prefab(absorber, circle, ring, star, material);
             ProvisionMetabolism(); ProvisionNutrient(circle, material);
+            string flowPath = Root + "Data/LocalFlow.asset";
+            if (AssetDatabase.LoadAssetAtPath<LocalFlowSettings>(flowPath) == null)
+                AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<LocalFlowSettings>(), flowPath);
             CellView corePrefab = Prefab(core, circle, ring, star, material);
             CellView ciliaPrefab = Prefab(cilia, circle, ring, star, material);
 
@@ -58,6 +61,7 @@ namespace Emerge.Editor
             settings.FindProperty("absorber").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Absorber.asset");
             settings.FindProperty("absorberPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/AbsorberCell.prefab").GetComponent<CellView>();
             settings.FindProperty("metabolismSettings").objectReferenceValue = AssetDatabase.LoadAssetAtPath<MetabolismSettings>(Root + "Data/Metabolism.asset");
+            settings.FindProperty("localFlowSettings").objectReferenceValue = AssetDatabase.LoadAssetAtPath<LocalFlowSettings>(flowPath);
             settings.FindProperty("nutrientPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/World/Nutrient.prefab").GetComponent<NutrientParticle>();
             settings.FindProperty("core").objectReferenceValue = core;
             settings.FindProperty("cilia").objectReferenceValue = cilia;

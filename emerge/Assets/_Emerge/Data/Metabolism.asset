@@ -19,5 +19,5 @@ MonoBehaviour:
   metabolismRate: 0.7
   energyYield: 4
   maintenancePerCell: 0.03
-  ciliaCost: 2
+  ciliaCost: 1.5
   supplyWindow: 0.35

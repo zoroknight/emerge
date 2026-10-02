@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace Emerge.Core
 {
     public enum LabMode { Edit, Swim }
-    public enum LabExample { Straight, Turn, Reverse, Feeding }
+    public enum LabExample { Straight, Turn, Reverse, Feeding, Filter }
 
     public sealed class CellLabController : MonoBehaviour
     {
@@ -19,6 +19,7 @@ namespace Emerge.Core
         [SerializeField] private CellView absorberPrefab;
         [SerializeField] private MetabolismSettings metabolismSettings;
         [SerializeField] private NutrientParticle nutrientPrefab;
+        [SerializeField] private LocalFlowSettings localFlowSettings;
         [SerializeField] private CellView corePrefab;
         [SerializeField] private CellView ciliaPrefab;
         [SerializeField] private Transform cellsRoot;
@@ -52,12 +53,13 @@ namespace Emerge.Core
         public CellDefinition AbsorberDefinition => absorber;
         public MetabolismState Metabolism { get; private set; }
         public NutrientWorld Food { get; private set; }
+        public bool ShowFlow { get; private set; } = true;
         public const float ArenaTop = 0.72f;
 
         private void Start()
         {
             Metabolism = new MetabolismState(metabolismSettings);
-            Food = gameObject.AddComponent<NutrientWorld>(); Food.Initialize(this, nutrientPrefab);
+            Food = gameObject.AddComponent<NutrientWorld>(); Food.Initialize(this, nutrientPrefab, localFlowSettings, worldCamera);
             panel.Initialize(this);
             var connections = new GameObject("连接显示").AddComponent<CellConnectionsView>();
             connections.transform.SetParent(transform, false);
@@ -67,6 +69,8 @@ namespace Emerge.Core
             var motion = new GameObject("纤毛方向显示").AddComponent<CellMotionView>();
             motion.transform.SetParent(transform, false);
             motion.Initialize(this, connectionMaterial);
+            var flowView = new GameObject("局部流场显示").AddComponent<CellFlowView>();
+            flowView.transform.SetParent(transform, false); flowView.Initialize(this, worldCamera, connectionMaterial);
             ResetLab();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             bool stress = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-stress") >= 0;
@@ -95,13 +99,29 @@ namespace Emerge.Core
         public void LoadNextExample()
         {
             if (!IsEditing) return;
-            exampleIndex = (exampleIndex + 1) % 4;
+            exampleIndex = (exampleIndex + 1) % 5;
             LoadExample((LabExample)exampleIndex);
         }
 
         public void LoadExample(LabExample example)
         {
             if (!IsEditing || capacity < 3) return;
+            if (example == LabExample.Filter)
+            {
+                if (capacity < 4) { SetMessage("滤食示例需要四个细胞的容量。"); return; }
+                ClearLab(); SpawnCore(); SpawnAbsorber(); SpawnCilia(); SpawnCilia();
+                Vector3 filterCenter = new Vector3(0, -1, 0);
+                cells[1].transform.position = filterCenter;
+                cells[0].transform.position = filterCenter + Vector3.left * (core.radius + absorber.radius);
+                float filterGap = absorber.radius + cilia.radius;
+                cells[2].transform.position = filterCenter + Vector3.up * filterGap;
+                cells[3].transform.position = filterCenter + Vector3.down * filterGap;
+                cells[2].transform.rotation = Quaternion.Euler(0, 0, -90);
+                cells[3].transform.rotation = Quaternion.Euler(0, 0, 90);
+                Connect(cells[0], cells[1]); Connect(cells[1], cells[2]); Connect(cells[1], cells[3]); Select(cells[1]);
+                Metabolism.Reset(0, 5);
+                SetMessage("滤食示例：7 投放远处营养，Tab 游动，W 将颗粒送入吸收区；两侧反作用力抵消，6 显示水流。"); return;
+            }
             if (example == LabExample.Feeding)
             {
                 ClearLab(); SpawnCore(); SpawnCilia(); SpawnAbsorber();
@@ -390,6 +410,8 @@ namespace Emerge.Core
                 if (keyboard.digit3Key.wasPressedThisFrame) LoadNextExample();
                 if (keyboard.digit4Key.wasPressedThisFrame) SpawnAbsorber();
                 if (keyboard.digit5Key.wasPressedThisFrame) SeedFood();
+                if (keyboard.digit6Key.wasPressedThisFrame) ShowFlow = !ShowFlow;
+                if (keyboard.digit7Key.wasPressedThisFrame) Food.SeedFilterPatch();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();

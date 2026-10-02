@@ -10,12 +10,18 @@ namespace Emerge.World
         public const int Capacity = 40;
         private CellLabController lab;
         private NutrientParticle prefab;
+        private LocalFlowSettings flow;
+        private Camera worldCamera;
+        public LocalFlowSettings FlowSettings => flow;
         private Transform root;
         private readonly List<NutrientParticle> particles = new List<NutrientParticle>();
         public IReadOnlyList<NutrientParticle> Particles => particles;
-        public void Initialize(CellLabController controller, NutrientParticle template)
+        public float TransportedIngested { get; private set; }
+        public void Initialize(CellLabController controller, NutrientParticle template, LocalFlowSettings settings, Camera camera)
         {
             lab = controller; prefab = template;
+            flow = settings; worldCamera = camera;
+            if (flow == null) throw new System.InvalidOperationException("缺少局部流场配置。");
             if (prefab == null) throw new System.InvalidOperationException("缺少营养颗粒预制体。");
             root = new GameObject("营养颗粒").transform; root.SetParent(transform, false);
         }
@@ -29,6 +35,59 @@ namespace Emerge.World
         {
             foreach (var particle in particles) { particle.gameObject.SetActive(false); Destroy(particle.gameObject); }
             particles.Clear();
+            TransportedIngested = 0;
+        }
+        public Vector2 FlowVelocityAt(Vector2 point, bool preview = false, float previewSupply = 1)
+        {
+            Vector2 velocity = flow.ambientVelocity;
+            foreach (var cell in lab.Cells)
+            {
+                if (cell.Definition.kind != CellKind.Cilia) continue;
+                float activation = preview ? lab.Physics.ActivationFor(cell) * previewSupply : cell.Activation;
+                if (activation <= 0) continue;
+                Vector2 center = preview ? (Vector2)cell.transform.position : cell.Body.worldCenterOfMass;
+                float distanceSquared = (point - center).sqrMagnitude;
+                float radiusSquared = flow.influenceRadius * flow.influenceRadius;
+                if (distanceSquared >= radiusSquared) continue;
+                float angle = (preview ? cell.transform.eulerAngles.z : cell.Body.rotation) * Mathf.Deg2Rad;
+                Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                velocity += direction * flow.ciliaSpeed * activation * (1 - distanceSquared / radiusSquared);
+            }
+            return Vector2.ClampMagnitude(velocity, flow.maximumSpeed);
+        }
+        public void Advect(float dt)
+        {
+            if (lab.IsEditing || dt <= 0) return;
+            Vector2 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
+            Vector2 max = worldCamera.ViewportToWorldPoint(new Vector3(1, CellLabController.ArenaTop, -worldCamera.transform.position.z));
+            foreach (var particle in particles)
+            {
+                Vector2 previous = particle.transform.position;
+                Vector2 velocity = FlowVelocityAt(previous);
+                Vector2 next = previous + velocity * dt;
+                next.x = Mathf.Clamp(next.x, min.x + NutrientParticle.Radius, max.x - NutrientParticle.Radius);
+                next.y = Mathf.Clamp(next.y, min.y + NutrientParticle.Radius, max.y - NutrientParticle.Radius);
+                particle.MoveTo(next, velocity);
+            }
+            if (flow.ambientBodyDrag > 0)
+                foreach (var cell in lab.Cells)
+                    cell.Body.AddForce((flow.ambientVelocity - cell.Body.linearVelocity) * flow.ambientBodyDrag);
+        }
+        public void SeedFilterPatch()
+        {
+            var connected = lab.Graph.Component(lab.PrimaryCore);
+            CellView collector = null;
+            foreach (var cell in lab.Cells)
+                if (connected.Contains(cell) && cell.Definition.kind == CellKind.Absorber) { collector = cell; break; }
+            if (collector == null) { lab.SetMessage("滤食投放需要与核心连通的吸收细胞。"); return; }
+            Vector2 center = lab.IsEditing ? (Vector2)collector.transform.position : collector.Body.worldCenterOfMass;
+            float angle = (lab.IsEditing ? collector.transform.eulerAngles.z : collector.Body.rotation) * Mathf.Deg2Rad;
+            Vector2 up = new Vector2(-Mathf.Sin(angle), Mathf.Cos(angle)), right = new Vector2(up.y, -up.x);
+            for (int sign = -1; sign <= 1; sign += 2)
+                for (int row = 0; row < 4; row++)
+                    for (int column = 0; column < 5; column++)
+                        Spawn(center + up * sign * (1.9f + row * 0.22f) + right * (column - 2) * 0.16f);
+            lab.SetMessage("已在吸收区外投放营养；W 开启滤食，松键对照，6 切换流场显示。颗粒不自动补充。");
         }
         public void SeedPatch()
         {
@@ -56,6 +115,7 @@ namespace Emerge.World
                     if (particle.Remaining <= 0 || Vector2.Distance(cell.Body.worldCenterOfMass, particle.transform.position) > cell.Definition.radius + NutrientParticle.Radius) continue;
                     float amount = Mathf.Min(budget, particle.Remaining, lab.Metabolism.Settings.nutrientCapacity - lab.Metabolism.Nutrients);
                     float eaten = particle.Consume(amount); lab.Metabolism.Receive(eaten); budget -= eaten;
+                    if (particle.TravelDistance > 0.1f) TransportedIngested += eaten;
                 }
             }
             for (int i = particles.Count - 1; i >= 0; i--)
