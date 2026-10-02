@@ -18,7 +18,8 @@ namespace Emerge.Cells
         public void Initialize(CellDefinition data)
         {
             definition = data;
-            if (applyDefinitionTint) body.color = data.bodyColor;
+            if (applyDefinitionTint) body.color = data.kind == CellKind.Membrane ?
+                new Color(data.bodyColor.r, data.bodyColor.g, data.bodyColor.b, 0.3f) : data.bodyColor;
             transform.localScale = Vector3.one * data.radius * 2f;
             Body = GetComponent<Rigidbody2D>();
             if (Body == null) Body = gameObject.AddComponent<Rigidbody2D>();

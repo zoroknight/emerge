@@ -17,6 +17,8 @@ namespace Emerge.Presentation
         public Button CoreButton { get; private set; }
         public Button CiliaButton { get; private set; }
         public Button AbsorberButton { get; private set; }
+        public Button MembraneButton { get; private set; }
+        private Button membraneTrialButton;
         public Button FoodButton { get; private set; }
         private Text resources;
         public Button ResetButton { get; private set; }
@@ -61,9 +63,13 @@ namespace Emerge.Presentation
             ExampleButton = MakeButton(bar.transform, "示例 [3]", 1032, lab.LoadNextExample, 100);
             FoodButton = MakeButton(bar.transform, "投放营养 [5]", 1142, lab.SeedFood, 114);
             resources = Label(bar.transform, "", new Vector2(24, -155), new Vector2(1230, 30), 17);
-            status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
+            MembraneButton = MakeButton(bar.transform, "添加膜 [8]", 24, lab.SpawnMembrane, 118);
+            MembraneButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(24, -66);
+            status = Label(bar.transform, "", new Vector2(152, -72), new Vector2(145, 28), 16);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
             feedback = Label(bar.transform, "", new Vector2(24, -112), new Vector2(750, 28), 17);
+            membraneTrialButton = MakeButton(bar.transform, "膜对照 [9]", 640, lab.LoadNextMembraneTrial, 150);
+            membraneTrialButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(640, -108);
             for (int i = 0; i < 4; i++)
             {
                 int channel = i;
@@ -95,7 +101,7 @@ namespace Emerge.Presentation
         public void Refresh()
         {
             if (status == null) return;
-            status.text = (lab.IsEditing ? "编辑模式" : "游动模式") + " · 细胞：" + lab.Cells.Count + " / " + lab.Capacity;
+            status.text = (lab.IsEditing ? "编辑" : "游动") + " · " + lab.Cells.Count + "/" + lab.Capacity + " 细胞";
             string input = "";
             if (lab.Physics != null)
                 for (int i = 0; i < 4; i++) if ((lab.Physics.ActiveMask & (1 << i)) != 0) input += ((Emerge.Cells.IntentChannel)i) + " ";
@@ -109,6 +115,8 @@ namespace Emerge.Presentation
                     (lab.IsEditing && lab.Physics != null ? lab.Physics.ActivationFor(lab.Selected) * lab.Physics.PreviewSupply() : lab.Selected.Activation).ToString("0.00") : "");
             if (lab.Selected != null && lab.Selected.Definition.absorptionRate > 0)
                 details.text += "  |  摄食 " + lab.Selected.Definition.absorptionRate.ToString("0.00") + "/秒";
+            if (lab.Selected != null && lab.Selected.Definition.kind == CellKind.Membrane)
+                details.text += "  |  膜片被动阻挡";
             if (lab.Metabolism != null)
             {
                 var state = lab.Metabolism; var data = state.Settings;
@@ -135,7 +143,9 @@ namespace Emerge.Presentation
             }
             var feedbackRect = feedback.GetComponent<RectTransform>();
             feedbackRect.anchoredPosition = new Vector2(configure ? 424 : 24, -112);
-            feedbackRect.sizeDelta = new Vector2(configure ? 356 : 750, 28);
+            feedbackRect.sizeDelta = new Vector2(configure ? 356 : 600, 28);
+            membraneTrialButton.gameObject.SetActive(!configure);
+            membraneTrialButton.interactable = lab.IsEditing;
             feedback.fontSize = configure ? 14 : 17;
             feedback.text = lab.Message;
             if (lab.Physics != null && (!lab.IsEditing || lab.Physics.ActiveMask != 0))
@@ -147,14 +157,14 @@ namespace Emerge.Presentation
                     "(" + force.Force.x.ToString("0.00") + ", " + force.Force.y.ToString("0.00") + ")") +
                     " · " + turn + " " + Mathf.Abs(force.Torque).ToString("0.00");
             }
-            CoreButton.interactable = CiliaButton.interactable = AbsorberButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
+            CoreButton.interactable = CiliaButton.interactable = AbsorberButton.interactable = MembraneButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
             FoodButton.interactable = lab.PrimaryCore != null && lab.Food != null && lab.Food.Particles.Count < Emerge.World.NutrientWorld.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
             ExampleButton.interactable = lab.IsEditing && lab.Capacity >= 3;
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例 | 4 吸收 | 5 近处营养 | 7 滤食营养 | 6 流场\n只配置核心出口，后续跟随；WASD 预览不耗能，Tab 游动才推动颗粒、摄食和代谢。紫箭头为合力。" :
+            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例 | 4 吸收 | 8 膜 | 9 膜对照 | 6 流场\n5 近处营养、7 滤食营养；只配置核心出口。白色膜片被动阻挡，Tab 游动才推动颗粒、摄食和代谢。" :
                 "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n缺能后摄食可恢复。5 投放近处营养，7 投放滤食营养，6 切换流场；蓝箭头推水，橙箭头为反作用力。";
         }
 

@@ -20,6 +20,7 @@ namespace Emerge.World
         public IReadOnlyList<SceneFlowRegion> FlowRegions => regions;
         public IReadOnlyList<NutrientParticle> Particles => particles;
         public float TransportedIngested { get; private set; }
+        public int MembraneContacts { get; private set; }
         public void Initialize(CellLabController controller, NutrientParticle template, LocalFlowSettings settings, Camera camera)
         {
             lab = controller; prefab = template;
@@ -59,6 +60,7 @@ namespace Emerge.World
             foreach (var particle in particles) { particle.gameObject.SetActive(false); Destroy(particle.gameObject); }
             particles.Clear();
             TransportedIngested = 0;
+            MembraneContacts = 0;
         }
         public Vector2 FlowVelocityAt(Vector2 point, bool preview = false, float previewSupply = 1)
         {
@@ -76,7 +78,7 @@ namespace Emerge.World
                 Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                 velocity += direction * flow.ciliaSpeed * activation * (1 - distanceSquared / radiusSquared);
             }
-            return Vector2.ClampMagnitude(velocity, flow.maximumSpeed);
+            return MembraneTransport.SurfaceVelocity(lab.Cells, point, Vector2.ClampMagnitude(velocity, flow.maximumSpeed), preview);
         }
         public void Advect(float dt)
         {
@@ -87,10 +89,11 @@ namespace Emerge.World
             {
                 Vector2 previous = particle.transform.position;
                 Vector2 velocity = FlowVelocityAt(previous);
-                Vector2 next = previous + velocity * dt;
+                Vector2 next = MembraneTransport.Move(lab.Cells, previous, velocity * dt, out int contacts);
+                MembraneContacts += contacts;
                 next.x = Mathf.Clamp(next.x, min.x + NutrientParticle.Radius, max.x - NutrientParticle.Radius);
                 next.y = Mathf.Clamp(next.y, min.y + NutrientParticle.Radius, max.y - NutrientParticle.Radius);
-                particle.MoveTo(next, velocity);
+                particle.MoveTo(next, (next - previous) / dt);
             }
             if (flow.ambientBodyDrag > 0)
                 foreach (var cell in lab.Cells)

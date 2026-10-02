@@ -19,6 +19,7 @@ namespace Emerge.Editor
             Sprite circle = CreateSprite("CellCircle", 0);
             Sprite ring = CreateSprite("SelectionRing", 1);
             Sprite star = CreateSprite("CoreStar", 2);
+            Sprite strip = CreateSprite("MembraneStrip", 3);
             var shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
             if (shader == null) throw new System.InvalidOperationException("URP 2D unlit shader missing.");
             string materialPath = Root + "Art/Materials/CellPlaceholder.mat";
@@ -32,6 +33,10 @@ namespace Emerge.Editor
             var cilia = Definition("Cilia", CellKind.Cilia, 0.58f, new Color(0.57f, 0.73f, 0.92f));
             var absorber = Definition("Absorber", CellKind.Absorber, 0.65f, new Color(0.9f, 0.65f, 0.43f));
             var absorberPrefab = Prefab(absorber, circle, ring, star, material);
+            var membrane = Definition("Membrane", CellKind.Membrane, 0.78f, new Color(0.70f, 0.55f, 0.88f));
+            bool newMembrane = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/MembraneCell.prefab") == null;
+            CellView membraneView = Prefab(membrane, circle, ring, star, material);
+            if (newMembrane) ConfigureMembraneSurface(membraneView, strip, circle, material);
             ProvisionMetabolism(); ProvisionNutrient(circle, material);
             SceneEnvironmentSetup.EnsurePrefabs();
             string flowPath = Root + "Data/LocalFlow.asset";
@@ -59,6 +64,8 @@ namespace Emerge.Editor
             panelSettings.FindProperty("chineseFont").objectReferenceValue = font;
             panelSettings.ApplyModifiedPropertiesWithoutUndo();
             var settings = new SerializedObject(lab);
+            settings.FindProperty("membrane").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Membrane.asset");
+            settings.FindProperty("membranePrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/MembraneCell.prefab").GetComponent<CellView>();
             settings.FindProperty("absorber").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Absorber.asset");
             settings.FindProperty("absorberPrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/AbsorberCell.prefab").GetComponent<CellView>();
             settings.FindProperty("metabolismSettings").objectReferenceValue = AssetDatabase.LoadAssetAtPath<MetabolismSettings>(Root + "Data/Metabolism.asset");
@@ -94,12 +101,12 @@ namespace Emerge.Editor
             var data = AssetDatabase.LoadAssetAtPath<CellDefinition>(path);
             if (data != null)
             {
-                data.displayName = kind == CellKind.Core ? "核心细胞" : kind == CellKind.Cilia ? "纤毛细胞" : "吸收细胞";
+                data.displayName = CellName(kind);
                 EditorUtility.SetDirty(data);
                 return data;
             }
             data = ScriptableObject.CreateInstance<CellDefinition>();
-            data.kind = kind; data.displayName = kind == CellKind.Core ? "核心细胞" : kind == CellKind.Cilia ? "纤毛细胞" : "吸收细胞"; data.radius = radius; data.bodyColor = color;
+            data.kind = kind; data.displayName = CellName(kind); data.radius = radius; data.bodyColor = color;
             data.maxConnections = kind == CellKind.Core ? 6 : 4;
             data.mass = kind == CellKind.Core ? 1.4f : 1f;
             data.thrust = kind == CellKind.Cilia ? 3.5f : 0;
@@ -107,6 +114,9 @@ namespace Emerge.Editor
             AssetDatabase.CreateAsset(data, path);
             return data;
         }
+
+        private static string CellName(CellKind kind) => kind == CellKind.Core ? "核心细胞" :
+            kind == CellKind.Cilia ? "纤毛细胞" : kind == CellKind.Membrane ? "膜细胞" : "吸收细胞";
 
         private static Sprite CreateSprite(string name, int shape)
         {
@@ -121,7 +131,7 @@ namespace Emerge.Editor
                         float px = (x + 0.5f) / size - 0.5f;
                         float py = (y + 0.5f) / size - 0.5f;
                         float distance = Mathf.Sqrt(px * px + py * py);
-                        float alpha = shape == 1 ? 1f - Mathf.Clamp01(Mathf.Abs(distance - 0.45f) / 0.016f) :
+                        float alpha = shape == 3 ? 1 : shape == 1 ? 1f - Mathf.Clamp01(Mathf.Abs(distance - 0.45f) / 0.016f) :
                             shape == 2 ? Mathf.Clamp01((0.46f - Mathf.Sqrt(Mathf.Abs(px)) * Mathf.Sqrt(Mathf.Abs(py)) - (Mathf.Abs(px) + Mathf.Abs(py)) * 0.55f) * 80f) :
                             Mathf.Clamp01((0.47f - distance) * size);
                         texture.SetPixel(x, y, new Color(1, 1, 1, alpha));
@@ -167,6 +177,13 @@ namespace Emerge.Editor
                         Vector2.one * 0.32f, definition.bodyColor, 1);
                 }
             }
+            if (definition.kind == CellKind.Membrane)
+            {
+                // The pale bar is the actual finite blocking surface (local Y).
+                body.color = new Color(definition.bodyColor.r, definition.bodyColor.g, definition.bodyColor.b, 0.3f);
+                Part(obj.transform, "Membrane surface", circle, material, Vector2.zero,
+                    new Vector2(MembraneTransport.HalfThickness / definition.radius / 0.47f, 1.064f), new Color(0.93f, 0.82f, 1), 3);
+            }
             var fields = new SerializedObject(view);
             fields.FindProperty("body").objectReferenceValue = body;
             fields.FindProperty("selection").objectReferenceValue = selection.gameObject;
@@ -183,6 +200,23 @@ namespace Emerge.Editor
             string path = Root + "Data/Metabolism.asset";
             if (AssetDatabase.LoadAssetAtPath<MetabolismSettings>(path) == null)
                 AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<MetabolismSettings>(), path);
+        }
+        private static void ConfigureMembraneSurface(CellView template, Sprite strip, Sprite circle, Material material)
+        {
+            // Only provision the placeholder once; later art substitutions stay under user control.
+            string path = AssetDatabase.GetAssetPath(template.gameObject);
+            var obj = PrefabUtility.LoadPrefabContents(path);
+            if (obj.transform.Find("Membrane end A") == null)
+            {
+                var surface = obj.transform.Find("Membrane surface");
+                surface.GetComponent<SpriteRenderer>().sprite = strip;
+                float half = MembraneTransport.HalfThickness / template.Definition.radius / 2;
+                surface.localScale = new Vector3(half * 2, 1, 1);
+                Part(obj.transform, "Membrane end A", circle, material, new Vector2(0, -0.5f), Vector2.one * (half / 0.47f), new Color(0.93f, 0.82f, 1), 3);
+                Part(obj.transform, "Membrane end B", circle, material, new Vector2(0, 0.5f), Vector2.one * (half / 0.47f), new Color(0.93f, 0.82f, 1), 3);
+                PrefabUtility.SaveAsPrefabAsset(obj, path);
+            }
+            PrefabUtility.UnloadPrefabContents(obj);
         }
         private static void ProvisionNutrient(Sprite circle, Material material)
         {

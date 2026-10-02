@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 namespace Emerge.Core
 {
     public enum LabMode { Edit, Swim }
-    public enum LabExample { Straight, Turn, Reverse, Feeding, Filter }
+    public enum LabExample { Straight, Turn, Reverse, Feeding, Filter, Membrane }
 
     public sealed class CellLabController : MonoBehaviour
     {
@@ -17,6 +17,10 @@ namespace Emerge.Core
         [SerializeField] private CellDefinition cilia;
         [SerializeField] private CellDefinition absorber;
         [SerializeField] private CellView absorberPrefab;
+        [SerializeField] private CellDefinition membrane;
+        [SerializeField] private CellView membranePrefab;
+        private GameObject membraneTrialFlow;
+        private int membraneTrialIndex = -1;
         [SerializeField] private MetabolismSettings metabolismSettings;
         [SerializeField] private NutrientParticle nutrientPrefab;
         [SerializeField] private LocalFlowSettings localFlowSettings;
@@ -51,6 +55,7 @@ namespace Emerge.Core
         public CellDefinition CoreDefinition => core;
         public CellDefinition CiliaDefinition => cilia;
         public CellDefinition AbsorberDefinition => absorber;
+        public CellDefinition MembraneDefinition => membrane;
         public MetabolismState Metabolism { get; private set; }
         public NutrientWorld Food { get; private set; }
         public bool ShowFlow { get; private set; } = true;
@@ -94,19 +99,56 @@ namespace Emerge.Core
         public void SpawnCore() => Spawn(core, corePrefab);
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
         public void SpawnAbsorber() => Spawn(absorber, absorberPrefab);
+        public void SpawnMembrane() => Spawn(membrane, membranePrefab);
+        public void LoadNextMembraneTrial()
+        {
+            if (!IsEditing) return;
+            membraneTrialIndex = (membraneTrialIndex + 1) % 3;
+            LoadMembraneTrial(membraneTrialIndex);
+        }
+
+        // All three trials use the same food coordinates, initial resources and prescribed stream.
+        // 0: guiding membrane, 1: no membrane, 2: membrane tilted the other way.
+        public void LoadMembraneTrial(int variant)
+        {
+            if (!IsEditing || capacity < 3) return;
+            ClearLab(); SpawnCore(); SpawnAbsorber();
+            cells[1].transform.position = new Vector3(0, -1, 0);
+            cells[0].transform.position = cells[1].transform.position + Vector3.down * (core.radius + absorber.radius);
+            Connect(cells[0], cells[1]);
+            if (variant != 1)
+            {
+                SpawnMembrane();
+                float gap = absorber.radius + membrane.radius;
+                cells[2].transform.position = new Vector3(-0.66f, -1 + Mathf.Sqrt(gap * gap - 0.66f * 0.66f), 0);
+                cells[2].transform.rotation = Quaternion.Euler(0, 0, variant == 2 ? -45 : 45);
+                Connect(cells[1], cells[2]); Select(cells[2]);
+            }
+            membraneTrialFlow = new GameObject("膜对照试验水流（离开示例自动移除）");
+            membraneTrialFlow.transform.SetParent(transform, false);
+            membraneTrialFlow.transform.position = new Vector3(-1, -1, 0);
+            var region = membraneTrialFlow.AddComponent<SceneFlowRegion>();
+            region.radius = 8; region.speed = 0.8f; region.fadeAtEdge = false;
+            Food.Clear(); Metabolism.Reset(0, 5);
+            for (int row = 0; row < 4; row++)
+                for (int column = 0; column < 6; column++)
+                    Food.Spawn(new Vector2(-3.5f - column * 0.3f, 0.20f + row * 0.06f));
+            SetMessage((variant == 1 ? "无膜" : variant == 2 ? "错误朝向" : "膜导流") + "：Tab 游动，无需 WASD；观察颗粒路径与累计摄食。返回编辑后 9 切换对照。");
+        }
         public void SeedFood() => Food.SeedPatch();
         public void ToggleFlowDisplay() => ShowFlow = !ShowFlow;
 
         public void LoadNextExample()
         {
             if (!IsEditing) return;
-            exampleIndex = (exampleIndex + 1) % 5;
+            exampleIndex = (exampleIndex + 1) % 6;
             LoadExample((LabExample)exampleIndex);
         }
 
         public void LoadExample(LabExample example)
         {
             if (!IsEditing || capacity < 3) return;
+            if (example == LabExample.Membrane) { LoadMembraneTrial(0); return; }
             if (example == LabExample.Filter)
             {
                 if (capacity < 4) { SetMessage("滤食示例需要四个细胞的容量。"); return; }
@@ -163,8 +205,8 @@ namespace Emerge.Core
         public CellView CreateStressCell(CellKind kind, Vector3 position, float rotation)
         {
             if (!IsEditing || cells.Count >= capacity) throw new System.InvalidOperationException("压力测试节点数量无效。");
-            var data = kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : absorber;
-            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : absorberPrefab;
+            var data = kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : kind == CellKind.Membrane ? membrane : absorber;
+            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : kind == CellKind.Membrane ? membranePrefab : absorberPrefab;
             var cell = Instantiate(prefab, position, Quaternion.Euler(0, 0, rotation), cellsRoot);
             cell.Initialize(data); cell.name = "压力样本 " + cells.Count;
             cell.Body.interpolation = RigidbodyInterpolation2D.None;
@@ -209,6 +251,7 @@ namespace Emerge.Core
             EndDrag(false);
             Physics?.StopSimulation();
             Graph.Clear();
+            if (membraneTrialFlow != null) { membraneTrialFlow.SetActive(false); Destroy(membraneTrialFlow); membraneTrialFlow = null; }
             Food?.Clear(); Metabolism?.Reset();
             PrimaryCore = null;
             selected = null;
@@ -417,6 +460,8 @@ namespace Emerge.Core
                 if (keyboard.digit5Key.wasPressedThisFrame) SeedFood();
                 if (keyboard.digit6Key.wasPressedThisFrame) ToggleFlowDisplay();
                 if (keyboard.digit7Key.wasPressedThisFrame) Food.SeedFilterPatch();
+                if (keyboard.digit8Key.wasPressedThisFrame) SpawnMembrane();
+                if (keyboard.digit9Key.wasPressedThisFrame) LoadNextMembraneTrial();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();

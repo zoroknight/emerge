@@ -110,6 +110,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return CellMembraneSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellMembraneSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -128,7 +134,7 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T09_PASS: local flow acceptance and T01-T08 regression.");
+                    Debug.Log("CELL_LAB_T10_PASS: membrane transport acceptance and T01-T09 regression.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }

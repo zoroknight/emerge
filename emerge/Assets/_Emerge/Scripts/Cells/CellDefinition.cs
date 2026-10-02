@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Emerge.Cells
 {
-    public enum CellKind { Core, Cilia, Absorber }
+    public enum CellKind { Core, Cilia, Absorber, Membrane }
     public enum IntentChannel { W, A, S, D }
 
     [CreateAssetMenu(menuName = "Emerge/Cell Definition")]

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Emerge.Cells;
 using Emerge.Core;
+using Emerge.World;
 using UnityEngine;
 
 namespace Emerge.Presentation
@@ -39,6 +40,18 @@ namespace Emerge.Presentation
             }
             foreach (var cell in lab.Cells)
             {
+                if (cell.Definition.kind == CellKind.Membrane)
+                {
+                    MembraneTransport.Geometry(cell, lab.IsEditing, out var a, out var b);
+                    Vector2 side = new Vector2((b - a).y, -(b - a).x).normalized;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector2 point = Vector2.Lerp(a, b, (i + 0.5f) / 5);
+                        float distance = MembraneTransport.HalfThickness + NutrientParticle.Radius + 0.0001f;
+                        Sample(point + side * distance, supply, false);
+                        Sample(point - side * distance, supply, false);
+                    }
+                }
                 if (cell.Definition.kind != CellKind.Cilia) continue;
                 float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) * supply : cell.Activation;
                 if (activation <= 0.001f) continue;

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3f6ab62b8bd4db41b3548051bf5a9d5, type: 3}
+  m_Name: Membrane
+  m_EditorClassIdentifier: Assembly-CSharp::Emerge.Cells.CellDefinition
+  kind: 3
+  displayName: "\u819C\u7EC6\u80DE"
+  radius: 0.78
+  bodyColor: {r: 0.7, g: 0.55, b: 0.88, a: 1}
+  maxConnections: 4
+  mass: 1
+  thrust: 0
+  signalRetention: 0.9
+  absorptionRate: 0
