@@ -1,0 +1,280 @@
+Mono path[0] = 'E:/gamejam/gamejam_1/emerge/Builds/Windows/Emerge_Data/Managed'
+Mono config path = 'E:/gamejam/gamejam_1/emerge/Builds/Windows/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Found 1 interfaces on host : 0) 192.168.1.101
+Player connection [14228]  Target information:
+
+Player connection [14228]  * "[IP] 192.168.1.101 [Port] 55000 [Flags] 2 [Guid] 2531624858 [EditorId] 4161623094 [Version] 1048832 [Id] WindowsPlayer(2,LAPTOP-V9ORJ8QI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Emerge"
+
+Player connection [14228] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.4.7f1 (f3c3c4248748)
+[Subsystems] Discovering subsystems at path E:/gamejam/gamejam_1/emerge/Builds/Windows/Emerge_Data/UnitySubsystems
+[D3D12 Device Filter] Vendor Name: NVIDIA
+[D3D12 Device Filter] Device Name: NVIDIA GeForce RTX 5060 Laptop GPU
+[D3D12 Device Filter] Driver Version: 32.0.15.8205
+[D3D12 Device Filter] Feature Level: 12.2
+[D3D12 Device Filter] Graphics Memory: 7810 MB
+[D3D12 Device Filter] Processor Count: 32
+[D3D12 Device Filter] Device Type: Discrete
+GfxDevice: creating device client; kGfxThreadingModeSplitJobs
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 5060 Laptop GPU (ID=0x2d59)
+    Vendor:          NVIDIA
+    VRAM:            7810 MB
+    App VRAM Budget: 7042 MB
+    Driver:          32.0.15.8205
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.002 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+
+Using Windows.Gaming.Input
+UnloadTime: 0.556900 ms
+CELL_LAB_T09_CHECK_START
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:17)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T03_GRAPH_PASS: free-angle snap, group drag, overlap/duplicate/self/distance/degree guards, chain, cycle, bridge deletion and core control.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellGraphSmokeCheck:Run (Emerge.Core.CellLabController) (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellGraphSmokeCheck.cs:75)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:55)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T04_PHYSICS_PASS: straight_core_dx=0.093; offset_core_angle=-9.21; rotated_core_dy=-0.093; input actions W/A, simultaneous channels, release damping, disconnected control and mode cleanup passed.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellPhysicsSmokeCheck/<Run>d__7:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellPhysicsSmokeCheck.cs:119)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T06_SIGNAL_PASS: root-only W/A/S/D configuration, automatic cilia relay, 0.9/0.81 attenuation, wrong-key rejection, actual thrust, isolated branches, merged ring signals, no return through core, max-not-sum, lossless ring, source deletion and UI locks.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellSignalSmokeCheck/<Run>d__7:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellSignalSmokeCheck.cs:133)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Straight","repeat":1,"cells":3,"fixedSteps":60,"predictedForce":{"x":6.299999713897705,"y":5.507634455170773e-7},"displacement":{"x":0.8762746453285217,"y":0.0},"predictedTorque":-1.2636184010261787e-7,"angle":0.0}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Turn","repeat":1,"cells":3,"fixedSteps":60,"predictedForce":{"x":3.1500003337860109,"y":-3.1500000953674318},"displacement":{"x":0.3874395787715912,"y":-0.4791371822357178},"predictedTorque":-4.094999313354492,"angle":-26.122589111328126}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Reverse","repeat":1,"cells":3,"fixedSteps":60,"predictedForce":{"x":-6.299999713897705,"y":0.0},"displacement":{"x":-0.8762746453285217,"y":0.0},"predictedTorque":1.2636184010261787e-7,"angle":8.947467335929105e-7}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Straight","repeat":2,"cells":3,"fixedSteps":60,"predictedForce":{"x":6.299999713897705,"y":5.507634455170773e-7},"displacement":{"x":0.8762746453285217,"y":0.0},"predictedTorque":-1.2636184010261787e-7,"angle":0.0}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Turn","repeat":2,"cells":3,"fixedSteps":60,"predictedForce":{"x":3.1500003337860109,"y":-3.1500000953674318},"displacement":{"x":0.3874395787715912,"y":-0.4791371822357178},"predictedTorque":-4.094999313354492,"angle":-26.122589111328126}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_TRIAL: {"example":"Reverse","repeat":2,"cells":3,"fixedSteps":60,"predictedForce":{"x":-6.299999713897705,"y":0.0},"displacement":{"x":-0.8762746453285217,"y":0.0},"predictedTorque":1.2636184010261787e-7,"angle":8.947467335929105e-7}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:96)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T07_M1_PASS: equal-count straight/turn/reverse repeated, input preview without motion, predicted force/torque vs actual physics, root signal change, release and mode cleanup.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellM1SmokeCheck/<Run>d__6:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellM1SmokeCheck.cs:112)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T08_METABOLISM_PASS: contact collection, core fallback, detached and distant exclusion, resource conservation, edit pause, starvation and recovery, uniform rationing, storage and particle limits, reset cleanup.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellMetabolismSmokeCheck/<Run>d__11:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellMetabolismSmokeCheck.cs:146)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_TRIAL: {"control":"no_input","repeat":1,"steps":550,"ingested":0.0,"transportedIngested":0.0,"produced":0.0,"activitySpent":0.0,"maintenanceSpent":1.3200023174285889,"initialEnergy":5.0,"finalEnergy":3.6800432205200197,"finalNutrients":0.0,"minimumLateSupply":1.0,"measuredProduced":0.0,"measuredActivity":0.0,"measuredMaintenance":0.9600021839141846,"resourceGain":-0.9599685668945313,"bodyDrift":0.0}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellFlowSmokeCheck/<Run>d__10:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellFlowSmokeCheck.cs:133)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_TRIAL: {"control":"reversed","repeat":1,"steps":550,"ingested":0.0,"transportedIngested":0.0,"produced":0.0,"activitySpent":4.677778244018555,"maintenanceSpent":0.32222288846969607,"initialEnergy":5.0,"finalEnergy":0.0,"finalNutrients":0.0,"minimumLateSupply":1.0,"measuredProduced":0.0,"measuredActivity":0.0,"measuredMaintenance":0.0,"resourceGain":0.0,"bodyDrift":0.0}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellFlowSmokeCheck/<Run>d__10:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellFlowSmokeCheck.cs:133)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_TRIAL: {"control":"inward","repeat":1,"steps":550,"ingested":15.237895965576172,"transportedIngested":15.237895965576172,"produced":29.007890701293947,"activitySpent":26.729877471923829,"maintenanceSpent":1.3200023174285889,"initialEnergy":5.0,"finalEnergy":5.957871913909912,"finalNutrients":7.986000061035156,"minimumLateSupply":1.0,"measuredProduced":22.39990234375,"measuredActivity":19.43986701965332,"measuredMaintenance":0.9600021839141846,"resourceGain":26.391855239868165,"bodyDrift":5.960464477539063e-8}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellFlowSmokeCheck/<Run>d__10:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellFlowSmokeCheck.cs:133)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_TRIAL: {"control":"inward","repeat":2,"steps":550,"ingested":15.237895965576172,"transportedIngested":15.237895965576172,"produced":29.007890701293947,"activitySpent":26.729877471923829,"maintenanceSpent":1.3200023174285889,"initialEnergy":5.0,"finalEnergy":5.957871913909912,"finalNutrients":7.986000061035156,"minimumLateSupply":1.0,"measuredProduced":22.39990234375,"measuredActivity":19.43986701965332,"measuredMaintenance":0.9600021839141846,"resourceGain":26.391855239868165,"bodyDrift":5.960464477539063e-8}
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellFlowSmokeCheck/<Run>d__10:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellFlowSmokeCheck.cs:133)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_FLOW_PASS: actual particle transport, no-input and reversed controls, repeatable positive resource balance, fixed-direction supply-scaled flow, edit pause, source loss, ambient flow and cleanup.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellFlowSmokeCheck/<Run>d__10:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellFlowSmokeCheck.cs:174)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_SCENE_ENVIRONMENT_PASS: placed regions, rotation, translation, composition, disable, placed nutrient grid and point, actual advection, reset, no duplicate food, dense cilia flow feedback and display-only toggle.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.SceneEnvironmentSmokeCheck/<Run>d__7:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/SceneEnvironmentSmokeCheck.cs:113)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+CELL_LAB_T09_PASS: local flow acceptance and T01-T08 regression.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Emerge.Core.CellLabSmokeCheck/<Start>d__0:MoveNext () (at E:/gamejam/gamejam_1/emerge/Assets/_Emerge/Scripts/Core/CellLabSmokeCheck.cs:131)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at C:/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed
+GarbageCollector disposing of ComputeBuffer. Please use ComputeBuffer.Release() or .Dispose() to manually release the buffer.
+PlayerConnection::Cleanup##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1790951219972,"processId":47328,"allocatedMemory":71386,"memoryLabels":[{"Default":5256},{"Thread":7424},{"Manager":17015},{"Shader":8},{"GfxDevice":2704},{"GfxThread":792},{"Audio":752},{"Serialization":520},{"Input":2440},{"JobScheduler":32768},{"String":495},{"PoolAlloc":192},{"CloudService":144},{"VR":1928},{"Video":144},{"NativeArray":372},{"Subsystems":96},{"CoreBusinessMetrics":120}]}

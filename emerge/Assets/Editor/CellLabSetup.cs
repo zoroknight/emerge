@@ -33,6 +33,7 @@ namespace Emerge.Editor
             var absorber = Definition("Absorber", CellKind.Absorber, 0.65f, new Color(0.9f, 0.65f, 0.43f));
             var absorberPrefab = Prefab(absorber, circle, ring, star, material);
             ProvisionMetabolism(); ProvisionNutrient(circle, material);
+            SceneEnvironmentSetup.EnsurePrefabs();
             string flowPath = Root + "Data/LocalFlow.asset";
             if (AssetDatabase.LoadAssetAtPath<LocalFlowSettings>(flowPath) == null)
                 AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<LocalFlowSettings>(), flowPath);
@@ -74,6 +75,7 @@ namespace Emerge.Editor
             settings.FindProperty("inputControls").objectReferenceValue = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(Root + "Data/EmergeControls.inputactions");
             settings.ApplyModifiedPropertiesWithoutUndo();
             Camera.main.orthographicSize = 6f;
+            SceneEnvironmentSetup.EnsureSceneExample(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
             Unity.CodeEditor.CodeEditor.CurrentEditor.SyncAll();

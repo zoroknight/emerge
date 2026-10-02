@@ -1,0 +1,14 @@
+{
+    "timestampUtc": "2026-10-02T14:26:59.7290382Z",
+    "unity": "6000.4.7f1",
+    "failure": "",
+    "passed": true,
+    "placedParticles": 5,
+    "restoredParticles": 5,
+    "localFlowSamples": 32,
+    "flowVertices": 704,
+    "translatedParticle": {
+        "x": 0.4999995231628418,
+        "y": 0.9999990463256836
+    }
+}

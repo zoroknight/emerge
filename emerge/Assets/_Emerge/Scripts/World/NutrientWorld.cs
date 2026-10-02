@@ -15,6 +15,9 @@ namespace Emerge.World
         public LocalFlowSettings FlowSettings => flow;
         private Transform root;
         private readonly List<NutrientParticle> particles = new List<NutrientParticle>();
+        private readonly List<SceneFlowRegion> regions = new List<SceneFlowRegion>();
+        private readonly List<SceneNutrientPatch> patches = new List<SceneNutrientPatch>();
+        public IReadOnlyList<SceneFlowRegion> FlowRegions => regions;
         public IReadOnlyList<NutrientParticle> Particles => particles;
         public float TransportedIngested { get; private set; }
         public void Initialize(CellLabController controller, NutrientParticle template, LocalFlowSettings settings, Camera camera)
@@ -24,6 +27,26 @@ namespace Emerge.World
             if (flow == null) throw new System.InvalidOperationException("缺少局部流场配置。");
             if (prefab == null) throw new System.InvalidOperationException("缺少营养颗粒预制体。");
             root = new GameObject("营养颗粒").transform; root.SetParent(transform, false);
+            foreach (var region in FindObjectsByType<SceneFlowRegion>()) RegisterFlow(region);
+            foreach (var patch in FindObjectsByType<SceneNutrientPatch>()) RegisterPatch(patch, false);
+        }
+        public void RegisterFlow(SceneFlowRegion region) { region.BindWorld(this); if (!regions.Contains(region)) regions.Add(region); }
+        public void UnregisterFlow(SceneFlowRegion region) => regions.Remove(region);
+        public void RegisterPatch(SceneNutrientPatch patch, bool populate = true)
+        {
+            if (patches.Contains(patch)) return;
+            patch.BindWorld(this);
+            patches.Add(patch);
+            if (populate && root != null) patch.PopulateOnce(this);
+        }
+        public void UnregisterPatch(SceneNutrientPatch patch) => patches.Remove(patch);
+        public void RestoreSceneNutrients()
+        { foreach (var patch in patches) if (patch != null && patch.isActiveAndEnabled) patch.Populate(this); }
+        public Vector2 AmbientVelocityAt(Vector2 point)
+        {
+            Vector2 velocity = flow.ambientVelocity;
+            foreach (var region in regions) if (region != null) velocity += region.VelocityAt(point);
+            return velocity;
         }
         public NutrientParticle Spawn(Vector2 position, float amount = 0.4f)
         {
@@ -39,7 +62,7 @@ namespace Emerge.World
         }
         public Vector2 FlowVelocityAt(Vector2 point, bool preview = false, float previewSupply = 1)
         {
-            Vector2 velocity = flow.ambientVelocity;
+            Vector2 velocity = AmbientVelocityAt(point);
             foreach (var cell in lab.Cells)
             {
                 if (cell.Definition.kind != CellKind.Cilia) continue;
@@ -71,7 +94,7 @@ namespace Emerge.World
             }
             if (flow.ambientBodyDrag > 0)
                 foreach (var cell in lab.Cells)
-                    cell.Body.AddForce((flow.ambientVelocity - cell.Body.linearVelocity) * flow.ambientBodyDrag);
+                    cell.Body.AddForce((Vector2.ClampMagnitude(AmbientVelocityAt(cell.Body.worldCenterOfMass), flow.maximumSpeed) - cell.Body.linearVelocity) * flow.ambientBodyDrag);
         }
         public void SeedFilterPatch()
         {

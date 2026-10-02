@@ -95,6 +95,7 @@ namespace Emerge.Core
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
         public void SpawnAbsorber() => Spawn(absorber, absorberPrefab);
         public void SeedFood() => Food.SeedPatch();
+        public void ToggleFlowDisplay() => ShowFlow = !ShowFlow;
 
         public void LoadNextExample()
         {
@@ -120,6 +121,7 @@ namespace Emerge.Core
                 cells[3].transform.rotation = Quaternion.Euler(0, 0, 90);
                 Connect(cells[0], cells[1]); Connect(cells[1], cells[2]); Connect(cells[1], cells[3]); Select(cells[1]);
                 Metabolism.Reset(0, 5);
+                Food.RestoreSceneNutrients();
                 SetMessage("滤食示例：7 投放远处营养，Tab 游动，W 将颗粒送入吸收区；两侧反作用力抵消，6 显示水流。"); return;
             }
             if (example == LabExample.Feeding)
@@ -131,6 +133,7 @@ namespace Emerge.Core
                 cells[2].transform.position = cells[0].transform.position + Vector3.right * (core.radius + absorber.radius);
                 Connect(cells[0], cells[1]); Connect(cells[0], cells[2]); Select(cells[2]);
                 Metabolism.Reset(0, 1);
+                Food.RestoreSceneNutrients();
                 SetMessage("摄食示例：按 W 耗能停工，再按 5 投放营养，观察吸收和恢复。"); return;
             }
             ClearLab(); SpawnCore(); SpawnCilia(); SpawnCilia();
@@ -142,6 +145,7 @@ namespace Emerge.Core
             cells[1].transform.rotation = Quaternion.Euler(0, 0, example == LabExample.Reverse ? 0 : 180);
             cells[2].transform.rotation = Quaternion.Euler(0, 0, example == LabExample.Reverse ? 0 : example == LabExample.Turn ? 90 : 180);
             Connect(cells[0], cells[1]); Connect(cells[0], cells[2]); Select(cells[0]);
+            Food.RestoreSceneNutrients();
             string title = example == LabExample.Straight ? "直行" : example == LabExample.Turn ? "偏转" : "反向";
             SetMessage("已载入" + title + "示例：同为核心 + 两个纤毛。按住 W 预览，Tab 游动。");
         }
@@ -196,6 +200,7 @@ namespace Emerge.Core
             ClearLab();
             SpawnCore();
             SpawnCilia();
+            Food.RestoreSceneNutrients();
         }
 
         public void ClearLab()
@@ -410,7 +415,7 @@ namespace Emerge.Core
                 if (keyboard.digit3Key.wasPressedThisFrame) LoadNextExample();
                 if (keyboard.digit4Key.wasPressedThisFrame) SpawnAbsorber();
                 if (keyboard.digit5Key.wasPressedThisFrame) SeedFood();
-                if (keyboard.digit6Key.wasPressedThisFrame) ShowFlow = !ShowFlow;
+                if (keyboard.digit6Key.wasPressedThisFrame) ToggleFlowDisplay();
                 if (keyboard.digit7Key.wasPressedThisFrame) Food.SeedFilterPatch();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();

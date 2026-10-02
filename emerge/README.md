@@ -86,6 +86,10 @@ powershell -ExecutionPolicy Bypass -File .\Tools\Unity.ps1 -Action Build
 
 脚本中编辑器路径仅适用于当前电脑；换机器后按实际安装位置调整。命令行创建和执行方法参考 [Unity 官方命令行文档](https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/command-line-arguments/editor)，构建接口参考 [BuildPipeline](https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/buildpipeline)，Visual Studio 组件标识参考 [Microsoft 官方列表](https://learn.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=visualstudio)。
 
+## 场景环境摆放
+
+在 `Assets/_Emerge/Prefabs/World` 使用 FlowRegion（局部环境流场）、NutrientPatch（营养区域）、NutrientPoint（单颗放置点）；可拖进场景，也可用 `GameObject > Emerge` 菜单。CellLab 自带默认关闭的场景环境示例。活跃纤毛周围显示密集局部水流，6 切换显示；完整操作见 [场景放置指南](Docs/场景流场与营养放置指南.md)。
+
 ## 当前边界
 
 工程初始化与 T01～T09 身体编辑、连接、物理推进、规模压力、核心出口信号、预览、营养代谢、局部流场与定向滤食已完成；膜协同、温度 / 损伤生存逻辑和地图尚未完成。环境记录见 [环境配置记录](Docs/环境配置记录.md)，当前任务状态见开发进度表。

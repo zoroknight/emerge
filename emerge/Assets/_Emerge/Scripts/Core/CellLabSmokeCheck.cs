@@ -104,6 +104,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return SceneEnvironmentSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = SceneEnvironmentSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
