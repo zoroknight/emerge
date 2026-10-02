@@ -22,9 +22,10 @@ namespace Emerge.Cells
             }
             if (mass == 0) return result;
             result.Center /= mass;
+            float supply = lab.IsEditing ? lab.Physics.PreviewSupply() : 1;
             foreach (var cell in body)
             {
-                float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) : cell.Activation;
+                float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) * supply : cell.Activation;
                 if (cell.Definition.kind == CellKind.Cilia && activation > 0) result.ActiveCilia++;
                 Vector2 force = lab.IsEditing ? cell.ForceFor(activation) : cell.LastForce;
                 Vector2 position = lab.IsEditing ? (Vector2)cell.transform.position : cell.Body.worldCenterOfMass;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Emerge.Cells;
 using Emerge.Presentation;
+using Emerge.World;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -8,12 +9,16 @@ using UnityEngine.InputSystem;
 namespace Emerge.Core
 {
     public enum LabMode { Edit, Swim }
-    public enum LabExample { Straight, Turn, Reverse }
+    public enum LabExample { Straight, Turn, Reverse, Feeding }
 
     public sealed class CellLabController : MonoBehaviour
     {
         [SerializeField] private CellDefinition core;
         [SerializeField] private CellDefinition cilia;
+        [SerializeField] private CellDefinition absorber;
+        [SerializeField] private CellView absorberPrefab;
+        [SerializeField] private MetabolismSettings metabolismSettings;
+        [SerializeField] private NutrientParticle nutrientPrefab;
         [SerializeField] private CellView corePrefab;
         [SerializeField] private CellView ciliaPrefab;
         [SerializeField] private Transform cellsRoot;
@@ -44,9 +49,15 @@ namespace Emerge.Core
         public CellLabPhysics Physics { get; private set; }
         public CellDefinition CoreDefinition => core;
         public CellDefinition CiliaDefinition => cilia;
+        public CellDefinition AbsorberDefinition => absorber;
+        public MetabolismState Metabolism { get; private set; }
+        public NutrientWorld Food { get; private set; }
+        public const float ArenaTop = 0.72f;
 
         private void Start()
         {
+            Metabolism = new MetabolismState(metabolismSettings);
+            Food = gameObject.AddComponent<NutrientWorld>(); Food.Initialize(this, nutrientPrefab);
             panel.Initialize(this);
             var connections = new GameObject("连接显示").AddComponent<CellConnectionsView>();
             connections.transform.SetParent(transform, false);
@@ -78,17 +89,30 @@ namespace Emerge.Core
 
         public void SpawnCore() => Spawn(core, corePrefab);
         public void SpawnCilia() => Spawn(cilia, ciliaPrefab);
+        public void SpawnAbsorber() => Spawn(absorber, absorberPrefab);
+        public void SeedFood() => Food.SeedPatch();
 
         public void LoadNextExample()
         {
             if (!IsEditing) return;
-            exampleIndex = (exampleIndex + 1) % 3;
+            exampleIndex = (exampleIndex + 1) % 4;
             LoadExample((LabExample)exampleIndex);
         }
 
         public void LoadExample(LabExample example)
         {
             if (!IsEditing || capacity < 3) return;
+            if (example == LabExample.Feeding)
+            {
+                ClearLab(); SpawnCore(); SpawnCilia(); SpawnAbsorber();
+                cells[0].transform.position = new Vector3(0, -1, 0);
+                cells[1].transform.position = cells[0].transform.position + Vector3.up * (core.radius + cilia.radius);
+                cells[1].transform.rotation = Quaternion.Euler(0, 0, 90);
+                cells[2].transform.position = cells[0].transform.position + Vector3.right * (core.radius + absorber.radius);
+                Connect(cells[0], cells[1]); Connect(cells[0], cells[2]); Select(cells[2]);
+                Metabolism.Reset(0, 1);
+                SetMessage("摄食示例：按 W 耗能停工，再按 5 投放营养，观察吸收和恢复。"); return;
+            }
             ClearLab(); SpawnCore(); SpawnCilia(); SpawnCilia();
             Vector3 center = new Vector3(0, -1, 0);
             float gap = core.radius + cilia.radius;
@@ -115,8 +139,8 @@ namespace Emerge.Core
         public CellView CreateStressCell(CellKind kind, Vector3 position, float rotation)
         {
             if (!IsEditing || cells.Count >= capacity) throw new System.InvalidOperationException("压力测试节点数量无效。");
-            var data = kind == CellKind.Core ? core : cilia;
-            var prefab = kind == CellKind.Core ? corePrefab : ciliaPrefab;
+            var data = kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : absorber;
+            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : absorberPrefab;
             var cell = Instantiate(prefab, position, Quaternion.Euler(0, 0, rotation), cellsRoot);
             cell.Initialize(data); cell.name = "压力样本 " + cells.Count;
             cell.Body.interpolation = RigidbodyInterpolation2D.None;
@@ -134,7 +158,7 @@ namespace Emerge.Core
             bool available = false;
             for (int i = 0; i < capacity; i++)
             {
-                position = new Vector3(-5.1f + i % 5 * 2.55f, 2.2f - i / 5 * 2.15f, 0);
+                position = new Vector3(-5.1f + i % 5 * 2.55f, 1.8f - i / 5 * 2f, 0);
                 if (Fits(data.radius, position, null)) { available = true; break; }
             }
             if (!available) { SetMessage("没有空闲生成位置，请移动细胞后再添加。"); return; }
@@ -160,6 +184,7 @@ namespace Emerge.Core
             EndDrag(false);
             Physics?.StopSimulation();
             Graph.Clear();
+            Food?.Clear(); Metabolism?.Reset();
             PrimaryCore = null;
             selected = null;
             SelectedConnection = null;
@@ -238,7 +263,7 @@ namespace Emerge.Core
             Vector3 position = pointer + dragOffset;
             float radius = dragged.Definition.radius;
             Vector3 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
-            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -worldCamera.transform.position.z));
+            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, ArenaTop, -worldCamera.transform.position.z));
             position.x = Mathf.Clamp(position.x, min.x + radius, max.x - radius);
             position.y = Mathf.Clamp(position.y, min.y + radius, max.y - radius);
             position.z = 0;
@@ -311,7 +336,7 @@ namespace Emerge.Core
         private bool GroupFits(HashSet<CellView> group, Vector3 delta)
         {
             Vector3 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
-            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -worldCamera.transform.position.z));
+            Vector3 max = worldCamera.ViewportToWorldPoint(new Vector3(1, ArenaTop, -worldCamera.transform.position.z));
             foreach (var cell in group)
             {
                 Vector3 position = cell.transform.position + delta;
@@ -363,6 +388,8 @@ namespace Emerge.Core
                 if (keyboard.digit1Key.wasPressedThisFrame) SpawnCore();
                 if (keyboard.digit2Key.wasPressedThisFrame) SpawnCilia();
                 if (keyboard.digit3Key.wasPressedThisFrame) LoadNextExample();
+                if (keyboard.digit4Key.wasPressedThisFrame) SpawnAbsorber();
+                if (keyboard.digit5Key.wasPressedThisFrame) SeedFood();
                 if (keyboard.backspaceKey.wasPressedThisFrame) ResetLab();
                 if (keyboard.xKey.wasPressedThisFrame) DisconnectSelected();
                 if (keyboard.deleteKey.wasPressedThisFrame) DeleteSelected();

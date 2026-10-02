@@ -20,3 +20,4 @@ MonoBehaviour:
   mass: 1
   thrust: 3.5
   signalRetention: 0.9
+  absorptionRate: 0

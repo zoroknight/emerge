@@ -16,6 +16,9 @@ namespace Emerge.Presentation
         private Font font;
         public Button CoreButton { get; private set; }
         public Button CiliaButton { get; private set; }
+        public Button AbsorberButton { get; private set; }
+        public Button FoodButton { get; private set; }
+        private Text resources;
         public Button ResetButton { get; private set; }
         public Button ClearButton { get; private set; }
         public Button ModeButton { get; private set; }
@@ -44,17 +47,20 @@ namespace Emerge.Presentation
             bar.transform.SetParent(canvasObject.transform, false);
             var rect = bar.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0, 1); rect.anchorMax = Vector2.one;
-            rect.pivot = new Vector2(0.5f, 1); rect.sizeDelta = new Vector2(0, 154);
+            rect.pivot = new Vector2(0.5f, 1); rect.sizeDelta = new Vector2(0, 196);
             rect.anchoredPosition = Vector2.zero;
             bar.GetComponent<Image>().color = new Color(0.04f, 0.1f, 0.14f, 0.96f);
             Label(bar.transform, "细胞实验室", new Vector2(24, -8), new Vector2(230, 52), 28);
-            CoreButton = MakeButton(bar.transform, "添加核心 [1]", 260, lab.SpawnCore);
-            CiliaButton = MakeButton(bar.transform, "添加纤毛 [2]", 440, lab.SpawnCilia);
-            ResetButton = MakeButton(bar.transform, "重置 [退格]", 620, lab.ResetLab);
-            ClearButton = MakeButton(bar.transform, "清空", 800, lab.ClearLab);
-            ModeButton = MakeButton(bar.transform, "", 980, lab.ToggleMode);
+            CoreButton = MakeButton(bar.transform, "添加核心 [1]", 260, lab.SpawnCore, 118);
+            CiliaButton = MakeButton(bar.transform, "添加纤毛 [2]", 388, lab.SpawnCilia, 118);
+            AbsorberButton = MakeButton(bar.transform, "添加吸收 [4]", 516, lab.SpawnAbsorber, 118);
+            ResetButton = MakeButton(bar.transform, "重置 [退格]", 644, lab.ResetLab, 128);
+            ClearButton = MakeButton(bar.transform, "清空", 782, lab.ClearLab, 90);
+            ModeButton = MakeButton(bar.transform, "", 882, lab.ToggleMode, 140);
             modeLabel = ModeButton.GetComponentInChildren<Text>();
-            ExampleButton = MakeButton(bar.transform, "示例 [3]", 1160, lab.LoadNextExample, 96);
+            ExampleButton = MakeButton(bar.transform, "示例 [3]", 1032, lab.LoadNextExample, 100);
+            FoodButton = MakeButton(bar.transform, "投放营养 [5]", 1142, lab.SeedFood, 114);
+            resources = Label(bar.transform, "", new Vector2(24, -155), new Vector2(1230, 30), 17);
             status = Label(bar.transform, "", new Vector2(24, -72), new Vector2(270, 28), 18);
             details = Label(bar.transform, "", new Vector2(300, -72), new Vector2(930, 28), 18);
             feedback = Label(bar.transform, "", new Vector2(24, -112), new Vector2(750, 28), 17);
@@ -100,7 +106,21 @@ namespace Emerge.Presentation
                 "  |  " + (lab.Selected == lab.PrimaryCore ? "主核心" : lab.IsCoreConnected(lab.Selected) ? "核心连通" : "无核心控制") +
                 (lab.Selected.Definition.kind == CellKind.Cilia ? "  |  信号：" + ReceivedSignals(lab.Selected) +
                     "  |  " + (lab.IsEditing ? "预览：" : "响应：") +
-                    (lab.IsEditing && lab.Physics != null ? lab.Physics.ActivationFor(lab.Selected) : lab.Selected.Activation).ToString("0.00") : "");
+                    (lab.IsEditing && lab.Physics != null ? lab.Physics.ActivationFor(lab.Selected) * lab.Physics.PreviewSupply() : lab.Selected.Activation).ToString("0.00") : "");
+            if (lab.Selected != null && lab.Selected.Definition.absorptionRate > 0)
+                details.text += "  |  摄食 " + lab.Selected.Definition.absorptionRate.ToString("0.00") + "/秒";
+            if (lab.Metabolism != null)
+            {
+                var state = lab.Metabolism; var data = state.Settings;
+                float requested = lab.Physics != null ? lab.Physics.RequestedEnergyRate() : 0;
+                float supply = lab.IsEditing && lab.Physics != null ? lab.Physics.PreviewSupply() : state.SupplyRatio;
+                resources.text = "营养 " + state.Nutrients.ToString("0.00") + "/" + data.nutrientCapacity +
+                    "  ·  能量 " + state.Energy.ToString("0.00") + "/" + data.energyCapacity +
+                    "  ·  供能 " + (requested > 0 ? supply.ToString("P0") : "无活动需求") +
+                    "  ·  累计摄食 " + state.Ingested.ToString("0.00") + "  ·  代谢产能 " + state.ProductionRate.ToString("0.00") + "/秒" +
+                    "  ·  推进耗能 " + (requested * supply).ToString("0.00") + "/秒  ·  颗粒 " + (lab.Food != null ? lab.Food.Particles.Count : 0) + "/40";
+                resources.color = requested > 0 && supply < 0.2f ? new Color(1, 0.65f, 0.35f) : new Color(0.75f, 0.95f, 0.78f);
+            }
             var edge = lab.SelectedConnection;
             bool configure = lab.IsCoreExit(edge);
             int mask = lab.ConnectionChannels(edge);
@@ -127,14 +147,15 @@ namespace Emerge.Presentation
                     "(" + force.Force.x.ToString("0.00") + ", " + force.Force.y.ToString("0.00") + ")") +
                     " · " + turn + " " + Mathf.Abs(force.Torque).ToString("0.00");
             }
-            CoreButton.interactable = CiliaButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
+            CoreButton.interactable = CiliaButton.interactable = AbsorberButton.interactable = lab.IsEditing && lab.Cells.Count < lab.Capacity;
+            FoodButton.interactable = lab.PrimaryCore != null && lab.Food != null && lab.Food.Particles.Count < Emerge.World.NutrientWorld.Capacity;
             ResetButton.interactable = ClearButton.interactable = lab.IsEditing;
             ExampleButton.interactable = lab.IsEditing && lab.Capacity >= 3;
             disconnectButton.interactable = lab.IsEditing && (lab.Selected != null || edge != null);
             deleteButton.interactable = lab.IsEditing && lab.Selected != null;
             modeLabel.text = lab.IsEditing ? "开始游动 [Tab]" : "返回编辑 [Tab]";
-            help.text = lab.IsEditing ? "拖近松开连接  |  Shift + 点击补边  |  Q / E、滚轮旋转  |  X 拆开  |  Delete 删除  |  3 载入示例（替换身体）\n只配置核心出口，后续自动跟随；按住 WASD 预览，Tab 游动。紫箭头表示合力，转矩显示转向趋势。" :
-                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n橙色箭头变亮表示正在施力；松键后停止施力，惯性在阻尼作用下逐渐减弱。";
+            help.text = lab.IsEditing ? "拖拽连接 | Shift 补边 | Q/E 旋转 | X 拆开 | Delete 删除 | 3 示例（替换身体）| 4 吸收 | 5 投放营养\n只配置核心出口，后续跟随；编辑按 WASD 预览（不耗能），Tab 游动才摄食与代谢。紫箭头为主动合力。" :
+                "按住 W / A / S / D 激活对应核心分支  |  当前输入：" + (input.Length == 0 ? "无" : input) + "  |  Tab 返回编辑\n缺能时推进减弱或停工；接触营养后经吸收、代谢恢复。5 投放实验营养，Tab 返回编辑暂停模拟。";
         }
 
         private string ReceivedSignals(CellView cell)

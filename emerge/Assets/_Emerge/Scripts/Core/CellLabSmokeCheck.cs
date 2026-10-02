@@ -14,7 +14,7 @@ namespace Emerge.Core
         private IEnumerator Start()
         {
             yield return null;
-            Debug.Log("CELL_LAB_T07_CHECK_START");
+            Debug.Log("CELL_LAB_T08_CHECK_START");
             string failure = null;
             try
             {
@@ -92,6 +92,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return CellMetabolismSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = CellMetabolismSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -110,11 +116,11 @@ namespace Emerge.Core
                 try
                 {
                     CapturePreview(screenshot);
-                    Debug.Log("CELL_LAB_T07_PASS: M1 functional acceptance and T01-T06 regression.");
+                    Debug.Log("CELL_LAB_T08_PASS: metabolism acceptance and T01-T07 regression.");
                 }
                 catch (Exception exception) { failure = exception.ToString(); }
             }
-            if (failure != null) Debug.LogError("CELL_LAB_T07_FAIL: " + failure);
+            if (failure != null) Debug.LogError("CELL_LAB_T08_FAIL: " + failure);
             Application.Quit(failure == null ? 0 : 1);
         }
 

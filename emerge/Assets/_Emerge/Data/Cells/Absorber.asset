@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3f6ab62b8bd4db41b3548051bf5a9d5, type: 3}
-  m_Name: Core
+  m_Name: Absorber
   m_EditorClassIdentifier: Assembly-CSharp::Emerge.Cells.CellDefinition
-  kind: 0
-  displayName: "\u6838\u5FC3\u7EC6\u80DE"
-  radius: 0.72
-  bodyColor: {r: 0.38, g: 0.83, b: 0.82, a: 1}
-  maxConnections: 6
-  mass: 1.4
+  kind: 2
+  displayName: "\u5438\u6536\u7EC6\u80DE"
+  radius: 0.65
+  bodyColor: {r: 0.9, g: 0.65, b: 0.43, a: 1}
+  maxConnections: 4
+  mass: 1
   thrust: 0
   signalRetention: 0.9
-  absorptionRate: 0.08
+  absorptionRate: 1.5

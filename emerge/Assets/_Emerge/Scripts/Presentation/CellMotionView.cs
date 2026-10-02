@@ -24,6 +24,7 @@ namespace Emerge.Presentation
                     removed.Add(entry.Key);
                 }
             foreach (var cell in removed) arrows.Remove(cell);
+            float supply = lab.IsEditing ? lab.Physics.PreviewSupply() : 1;
             foreach (var cell in lab.Cells)
             {
                 if (cell.Definition.kind != CellKind.Cilia) continue;
@@ -32,7 +33,7 @@ namespace Emerge.Presentation
                     pair = new[] { CreateLine("推水方向"), CreateLine("反作用力方向") }; arrows.Add(cell, pair);
                 }
                 Arrow(pair[0], cell, cell.FluidDirection, new Color(0.35f, 0.75f, 1f));
-                float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) : cell.Activation;
+                float activation = lab.IsEditing ? lab.Physics.ActivationFor(cell) * supply : cell.Activation;
                 Arrow(pair[1], cell, -cell.FluidDirection, Color.Lerp(new Color(0.65f, 0.43f, 0.2f), new Color(1f, 0.8f, 0.3f), activation), 0.25f + activation * 0.6f);
             }
             if (totalForce == null) { totalForce = CreateLine("身体合力"); totalForce.sortingOrder = 5; totalForce.startWidth = totalForce.endWidth = 0.07f; }

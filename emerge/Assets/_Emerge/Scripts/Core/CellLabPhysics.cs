@@ -93,12 +93,21 @@ namespace Emerge.Core
         {
             if (lab == null || lab.IsEditing) return;
             Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
-            foreach (var cell in lab.Cells)
-            {
-                float intensity = ActivationFor(cell);
-                cell.ApplyThrust(intensity);
-            }
+            var connected = lab.Graph.Component(lab.PrimaryCore);
+            float requested = RequestedEnergyRate();
+            lab.Food.Capture(Time.fixedDeltaTime, connected);
+            if (lab.PrimaryCore != null) lab.Metabolism.Step(Time.fixedDeltaTime, requested, connected.Count);
+            foreach (var cell in lab.Cells) cell.ApplyThrust(ActivationFor(cell) * lab.Metabolism.SupplyRatio);
         }
+
+        public float RequestedEnergyRate()
+        {
+            float rate = 0;
+            foreach (var cell in lab.Cells) rate += ActivationFor(cell) * lab.Metabolism.Settings.ciliaCost;
+            return rate;
+        }
+
+        public float PreviewSupply() => lab.Metabolism.PreviewSupply(RequestedEnergyRate(), lab.Graph.Component(lab.PrimaryCore).Count, Time.fixedDeltaTime);
 
         private void OnEnable()
         {
@@ -132,7 +141,7 @@ namespace Emerge.Core
         {
             if (arena != null) { arena.SetActive(false); Destroy(arena); }
             Vector3 min = arenaCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -arenaCamera.transform.position.z));
-            Vector3 max = arenaCamera.ViewportToWorldPoint(new Vector3(1, 0.76f, -arenaCamera.transform.position.z));
+            Vector3 max = arenaCamera.ViewportToWorldPoint(new Vector3(1, CellLabController.ArenaTop, -arenaCamera.transform.position.z));
             Vector2 center = (min + max) / 2;
             Vector2 size = max - min;
             arena = new GameObject("实验室边界"); arena.transform.SetParent(transform, false);

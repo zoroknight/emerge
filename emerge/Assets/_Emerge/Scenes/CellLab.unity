@@ -301,6 +301,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Emerge.Core.CellLabController
   core: {fileID: 11400000, guid: 7be8c1c1d53ac9c4cbf4a75385dede2a, type: 2}
   cilia: {fileID: 11400000, guid: 0b058c70f92721d40a8190820002ecd4, type: 2}
+  absorber: {fileID: 11400000, guid: 905f7226f106c584086cfcf2e557b282, type: 2}
+  absorberPrefab: {fileID: 684446407778282987, guid: d1d1224269907d4479b9258f023ddf97, type: 3}
+  metabolismSettings: {fileID: 11400000, guid: 9254018e2585f0847bb1f4a63c969d12, type: 2}
+  nutrientPrefab: {fileID: 5616192347198275106, guid: cbde21b57c5a1d64eb261bcb77a6ea9f, type: 3}
   corePrefab: {fileID: 2862986156827007397, guid: e4bfe4edf0bb4924d860249297e33f5e, type: 3}
   ciliaPrefab: {fileID: 8702002054884210627, guid: 50fa5e7f3f634d8458bc76ef9c801c6d, type: 3}
   cellsRoot: {fileID: 1892439732}

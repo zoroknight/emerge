@@ -52,6 +52,7 @@ namespace Emerge.Core
         public double simulateP95BudgetMs = 4;
         public bool passed;
         public string decision, failure = "";
+        public bool unlimitedEnergy;
         public List<string> runtimeErrors = new List<string>();
         public List<StressCaseResult> cases = new List<StressCaseResult>();
     }
@@ -64,6 +65,7 @@ namespace Emerge.Core
         private SimulationMode2D previousSimulation;
         private InputSettings.BackgroundBehavior previousBackground;
         private bool globalsChanged;
+        private bool unlimitedChanged, previousUnlimited;
         private int originalCapacity;
         private float originalCameraSize;
         private readonly StressSuiteResult report = new StressSuiteResult();
@@ -74,6 +76,8 @@ namespace Emerge.Core
         {
             yield return null;
             lab = GetComponent<CellLabController>();
+            previousUnlimited = lab.Metabolism.DebugUnlimited; unlimitedChanged = true;
+            lab.Metabolism.DebugUnlimited = true; report.unlimitedEnergy = true;
             originalCapacity = lab.Capacity; originalCameraSize = Camera.main.orthographicSize;
             report.timestampUtc = DateTime.UtcNow.ToString("O"); report.unity = Application.unityVersion;
             report.runtime = Application.isEditor ? "Editor" : "Windows development player";
@@ -262,6 +266,7 @@ namespace Emerge.Core
 
         private void RestoreGlobals()
         {
+            if (unlimitedChanged && lab != null) { lab.Metabolism.DebugUnlimited = previousUnlimited; unlimitedChanged = false; }
             if (!globalsChanged) return;
             if (lab != null && !lab.IsEditing) lab.ToggleMode();
             if (keyboard != null) { InputSystem.RemoveDevice(keyboard); keyboard = null; }
