@@ -122,6 +122,12 @@ namespace Emerge.Core
             yield return null;
             if (failure == null)
             {
+                yield return ExperimentSmokeCheck.Run(FindAnyObjectByType<CellLabController>());
+                failure = ExperimentSmokeCheck.Failure;
+            }
+            yield return null;
+            if (failure == null)
+            {
                 var views = FindObjectsByType<CellView>();
                 if (views.Length != 2) failure = "Reset left orphan active samples: " + views.Length;
                 var lab = FindAnyObjectByType<CellLabController>();
@@ -156,13 +162,16 @@ namespace Emerge.Core
         public static void CapturePreview(string path)
         {
             // Render explicitly: a hidden Windows swap chain can return an all-black screenshot.
+            FindAnyObjectByType<CellLabController>()?.Panel.Refresh();
             Camera camera = Camera.main;
             var canvas = FindAnyObjectByType<Canvas>();
             var previousMode = canvas.renderMode;
             var previousCamera = canvas.worldCamera;
+            int previousOrder = canvas.sortingOrder;
             float previousDistance = canvas.planeDistance, previousAspect = camera.aspect;
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = camera;
+            canvas.sortingOrder = 100;
             canvas.planeDistance = 1;
             camera.aspect = 1280f / 720f;
             Canvas.ForceUpdateCanvases();
@@ -183,6 +192,7 @@ namespace Emerge.Core
                 RenderTexture.ReleaseTemporary(target);
                 Destroy(texture);
                 canvas.renderMode = previousMode; canvas.worldCamera = previousCamera; canvas.planeDistance = previousDistance;
+                canvas.sortingOrder = previousOrder;
                 camera.aspect = previousAspect;
                 Canvas.ForceUpdateCanvases();
             }

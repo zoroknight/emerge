@@ -20,6 +20,7 @@ namespace Emerge.Core
         public CellSignalNetwork Signals { get; } = new CellSignalNetwork();
         public float ActivationFor(CellView cell)
         {
+            if (cell != null && cell.Definition.kind == CellKind.Contractor && lab.Experiments != null && lab.Experiments.DisableContraction) return 0;
             Signals.Refresh(lab.Graph, lab.Cells, lab.PrimaryCore);
             return cell != null && (cell.Definition.kind == CellKind.Cilia || cell.Definition.kind == CellKind.Contractor) ? Signals.Activation(lab.PrimaryCore, cell, strengths) : 0;
         }

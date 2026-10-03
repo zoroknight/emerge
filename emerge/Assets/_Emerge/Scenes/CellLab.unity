@@ -380,6 +380,14 @@ MonoBehaviour:
   connectionMaterial: {fileID: 2100000, guid: f3fd77126cbddab45a833206a17fed77, type: 2}
   inputControls: {fileID: -944628639613478452, guid: 09cd9c1903203674b98757322b5d52c7, type: 3}
   capacity: 20
+  experimentTemplates:
+  - {fileID: 11400000, guid: 8522f3a5f63d6bf418626a2266da5157, type: 2}
+  - {fileID: 11400000, guid: eab693ebcea0a15449ca997b2d8453ec, type: 2}
+  - {fileID: 11400000, guid: bd2138bf8b464ce4d841bfd707fe9ff8, type: 2}
+  - {fileID: 11400000, guid: 87a9b9178498c1c48b57f67bf47f7882, type: 2}
+  - {fileID: 11400000, guid: ffc60f4818c134e4b9ab136e215a503a, type: 2}
+  - {fileID: 11400000, guid: 46cf4e27fac2fa84bad8455c4ebb852b, type: 2}
+  - {fileID: 11400000, guid: 7b34eaa7615cd4545aca8d4618421d97, type: 2}
 --- !u!4 &549435916
 Transform:
   m_ObjectHideFlags: 0

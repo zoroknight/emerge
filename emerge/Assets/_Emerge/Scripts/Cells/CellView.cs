@@ -22,6 +22,11 @@ namespace Emerge.Cells
             transform.localScale = Vector3.one * EffectiveRadius * 2;
         }
         public Vector2 FluidDirection => transform.right;
+        public void RestoreContraction(float value)
+        {
+            Contraction = definition.kind == CellKind.Contractor ? Mathf.Clamp01(value) : 0;
+            transform.localScale = Vector3.one * EffectiveRadius * 2;
+        }
 
         public void Initialize(CellDefinition data)
         {

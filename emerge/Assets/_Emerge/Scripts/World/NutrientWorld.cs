@@ -55,15 +55,16 @@ namespace Emerge.World
             if (patches.Contains(patch)) return;
             patch.BindWorld(this);
             patches.Add(patch);
-            if (populate && root != null) patch.PopulateOnce(this);
+            if (populate && root != null && (lab.Experiments == null || !lab.Experiments.IsActive)) patch.PopulateOnce(this);
         }
         public void UnregisterPatch(SceneNutrientPatch patch) => patches.Remove(patch);
         public void RestoreSceneNutrients()
-        { foreach (var patch in patches) if (patch != null && patch.isActiveAndEnabled) patch.Populate(this); }
+        { if (lab.Experiments != null && lab.Experiments.IsActive) return; foreach (var patch in patches) if (patch != null && patch.isActiveAndEnabled) patch.Populate(this); }
         public Vector2 AmbientVelocityAt(Vector2 point)
         {
-            Vector2 velocity = flow.ambientVelocity;
-            foreach (var region in regions) if (region != null) velocity += region.VelocityAt(point);
+            bool experiment = lab.Experiments != null && lab.Experiments.IsActive;
+            Vector2 velocity = experiment ? lab.Experiments.Active.ambient : flow.ambientVelocity;
+            foreach (var region in regions) if (region != null && (!experiment || region.IsExperimentSource)) velocity += region.VelocityAt(point);
             return velocity;
         }
         public NutrientParticle Spawn(Vector2 position, float amount = 0.4f)

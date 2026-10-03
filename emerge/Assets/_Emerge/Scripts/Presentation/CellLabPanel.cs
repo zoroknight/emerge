@@ -14,6 +14,8 @@ namespace Emerge.Presentation
         private Text status;
         private Text details;
         private Font font;
+        public Font UiFont => font;
+        public Transform CanvasRoot { get; private set; }
         public Button CoreButton { get; private set; }
         public Button CiliaButton { get; private set; }
         public Button AbsorberButton { get; private set; }
@@ -41,6 +43,7 @@ namespace Emerge.Presentation
             if (font == null) throw new System.InvalidOperationException("实验室未配置中文字体，请检查 CellLabPanel 的字体引用。");
             var canvasObject = new GameObject("Lab UI", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvasObject.transform.SetParent(transform, false);
+            CanvasRoot = canvasObject.transform;
             canvasObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             var scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -93,7 +96,7 @@ namespace Emerge.Presentation
             footer.GetComponent<Image>().color = new Color(0.04f, 0.1f, 0.14f, 0.96f);
             footer.GetComponent<Image>().raycastTarget = false;
             help = Label(canvasObject.transform, "",
-                new Vector2(24, -646), new Vector2(1230, 64), 17);
+                new Vector2(24, -646), new Vector2(1040, 64), 16);
             if (EventSystem.current == null)
             {
                 var events = new GameObject("Lab EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));

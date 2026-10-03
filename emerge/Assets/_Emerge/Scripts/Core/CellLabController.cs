@@ -34,6 +34,9 @@ namespace Emerge.Core
         [SerializeField] private Material connectionMaterial;
         [SerializeField] private InputActionAsset inputControls;
         [SerializeField, Range(2, 30)] private int capacity = 20;
+        [SerializeField] private CellExperiment[] experimentTemplates = new CellExperiment[0];
+        public ExperimentLibrary Experiments { get; private set; }
+        public ExperimentMenu ExperimentMenu { get; private set; }
 
         private readonly List<CellView> cells = new List<CellView>();
         private CellView selected;
@@ -79,6 +82,9 @@ namespace Emerge.Core
             motion.Initialize(this, connectionMaterial);
             var flowView = new GameObject("局部流场显示").AddComponent<CellFlowView>();
             flowView.transform.SetParent(transform, false); flowView.Initialize(this, worldCamera, connectionMaterial);
+            Experiments = new ExperimentLibrary(this, experimentTemplates);
+            ExperimentMenu = gameObject.AddComponent<ExperimentMenu>();
+            ExperimentMenu.Initialize(this);
             ResetLab();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             bool stress = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "--cell-lab-stress") >= 0;
@@ -256,6 +262,7 @@ namespace Emerge.Core
         public void ResetLab()
         {
             if (!IsEditing) return;
+            if (Experiments != null && Experiments.IsActive) { Experiments.Load(Experiments.Active); return; }
             ClearLab();
             SpawnCore();
             SpawnCilia();
@@ -265,6 +272,7 @@ namespace Emerge.Core
         public void ClearLab()
         {
             if (!IsEditing) return;
+            Experiments?.End();
             EndDrag(false);
             Physics?.StopSimulation();
             Graph.Clear();
@@ -462,12 +470,33 @@ namespace Emerge.Core
             panel.Refresh();
         }
 
+        public CellDefinition DefinitionFor(CellKind kind) => kind == CellKind.Core ? core : kind == CellKind.Cilia ? cilia : kind == CellKind.Absorber ? absorber : kind == CellKind.Membrane ? membrane : contractor;
+        public void SetExperimentCapacity(int count) => capacity = Mathf.Clamp(count, 2, 30);
+        public bool ExperimentPositionFits(Vector2 position, float radius)
+        {
+            Vector2 min = worldCamera.ViewportToWorldPoint(new Vector3(0, 0.08f, -worldCamera.transform.position.z));
+            Vector2 max = worldCamera.ViewportToWorldPoint(new Vector3(1, ArenaTop, -worldCamera.transform.position.z));
+            return position.x >= min.x + radius && position.x <= max.x - radius && position.y >= min.y + radius && position.y <= max.y - radius;
+        }
+        public CellView CreateExperimentCell(CellKind kind, Vector2 position, float rotation)
+        {
+            var prefab = kind == CellKind.Core ? corePrefab : kind == CellKind.Cilia ? ciliaPrefab : kind == CellKind.Absorber ? absorberPrefab : kind == CellKind.Membrane ? membranePrefab : contractorPrefab;
+            var cell = Instantiate(prefab, position, Quaternion.Euler(0, 0, rotation), cellsRoot);
+            cell.Initialize(DefinitionFor(kind)); cell.name = cell.Definition.displayName + " " + (cells.Count + 1);
+            cells.Add(cell); if (PrimaryCore == null && kind == CellKind.Core) PrimaryCore = cell;
+            return cell;
+        }
         private void OnApplicationFocus(bool focused) { if (!focused) EndDrag(false); }
         private void OnDisable() { EndDrag(false); Physics?.StopSimulation(); }
 
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
+            if (ExperimentMenu != null)
+            {
+                if (!ExperimentMenu.IsOpen && keyboard != null && keyboard.bKey.wasPressedThisFrame) ExperimentMenu.Open();
+                if (ExperimentMenu.IsOpen) { panel.Refresh(); return; }
+            }
             if (keyboard != null)
             {
                 if (keyboard.tabKey.wasPressedThisFrame) ToggleMode();

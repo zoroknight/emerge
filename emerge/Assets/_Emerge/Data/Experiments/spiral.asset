@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d140d84a65c35e4c9dc994595253194, type: 3}
+  m_Name: spiral
+  m_EditorClassIdentifier: Assembly-CSharp::Emerge.Core.CellExperiment
+  data:
+    version: 1
+    id: spiral
+    title: "360\xB0\u65CB\u8F6C\u5438\u5165\u5019\u9009"
+    idea: "\u4E09\u81C2\u7EA4\u6BDB\u5177\u6709\u5207\u5411\u4E0E\u5411\u5185\u5206\u91CF\uFF0C\u8EAB\u4F53\u53CD\u5411\u65CB\u8F6C\u3002\u9A8C\u8BC1\u73AF\u5468\u98DF\u7269\u662F\u5426\u65CB\u8F6C\u9760\u8FD1\u5438\u6536\u9762\uFF1B\u7F3A\u80FD\u4F1A\u964D\u4F4E\u8F6C\u901F\u3002"
+    controls: "Tab\uFF1B\u6309\u4F4F W \u89C2\u5BDF\u65CB\u8F6C\u3001\u73AF\u5F62\u98DF\u7269\u8DEF\u5F84\u3001\u6355\u83B7\u4E0E\u4F9B\u80FD\u3002\u5206\u522B\u8F7D\u5165\u4E09\u79CD\u671D\u5411\u5BF9\u7167\uFF1B6
+      \u5207\u6362\u6C34\u6D41\u3002"
+    notes:
+    nutrients: 8
+    energy: 10
+    disableContraction: 0
+    ambient: {x: 0, y: 0}
+    cells:
+    - kind: 0
+      position: {x: 0, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 2
+      position: {x: 1.37, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 1
+      position: {x: 2.6, y: -1}
+      rotation: 135
+      contraction: 0
+    - kind: 2
+      position: {x: -0.68500006, y: 0.18645477}
+      rotation: 0
+      contraction: 0
+    - kind: 1
+      position: {x: -1.3000001, y: 1.2516658}
+      rotation: 255
+      contraction: 0
+    - kind: 2
+      position: {x: -0.6849999, y: -2.1864548}
+      rotation: 0
+      contraction: 0
+    - kind: 1
+      position: {x: -1.2999997, y: -3.251666}
+      rotation: 375
+      contraction: 0
+    links:
+    - a: 0
+      b: 1
+      channel: 0
+    - a: 1
+      b: 2
+      channel: 0
+    - a: 0
+      b: 3
+      channel: 0
+    - a: 3
+      b: 4
+      channel: 0
+    - a: 0
+      b: 5
+      channel: 0
+    - a: 5
+      b: 6
+      channel: 0
+    food:
+    - position: {x: 2.9423556, y: -0.414729}
+      amount: 0.4
+      captor: -1
+    - position: {x: 2.4944088, y: 0.66671073}
+      amount: 0.4
+      captor: -1
+    - position: {x: 1.6667106, y: 1.4944091}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.5852707, y: 1.9423559}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.585271, y: 1.9423556}
+      amount: 0.4
+      captor: -1
+    - position: {x: -1.6667111, y: 1.4944086}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.494409, y: 0.6667106}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.9423559, y: -0.41472906}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.9423556, y: -1.5852715}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.4944086, y: -2.6667109}
+      amount: 0.4
+      captor: -1
+    - position: {x: -1.66671, y: -3.4944093}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.5852711, y: -3.9423556}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.58527124, y: -3.9423556}
+      amount: 0.4
+      captor: -1
+    - position: {x: 1.6667113, y: -3.4944084}
+      amount: 0.4
+      captor: -1
+    - position: {x: 2.4944088, y: -2.6667109}
+      amount: 0.4
+      captor: -1
+    - position: {x: 2.9423559, y: -1.5852706}
+      amount: 0.4
+      captor: -1
+    - position: {x: 3.187552, y: -0.36595643}
+      amount: 0.4
+      captor: -1
+    - position: {x: 2.7022762, y: 0.80560327}
+      amount: 0.4
+      captor: -1
+    - position: {x: 1.8056031, y: 1.7022765}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.6340433, y: 2.1875522}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.6340436, y: 2.187552}
+      amount: 0.4
+      captor: -1
+    - position: {x: -1.8056037, y: 1.702276}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.7022765, y: 0.80560315}
+      amount: 0.4
+      captor: -1
+    - position: {x: -3.1875522, y: -0.3659565}
+      amount: 0.4
+      captor: -1
+    - position: {x: -3.187552, y: -1.6340442}
+      amount: 0.4
+      captor: -1
+    - position: {x: -2.702276, y: -2.8056035}
+      amount: 0.4
+      captor: -1
+    - position: {x: -1.8056026, y: -3.7022767}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.63404375, y: -4.187552}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.6340438, y: -4.187552}
+      amount: 0.4
+      captor: -1
+    - position: {x: 1.8056039, y: -3.7022758}
+      amount: 0.4
+      captor: -1
+    - position: {x: 2.7022762, y: -2.8056035}
+      amount: 0.4
+      captor: -1
+    - position: {x: 3.1875522, y: -1.6340432}
+      amount: 0.4
+      captor: -1
+    flows: []

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d140d84a65c35e4c9dc994595253194, type: 3}
+  m_Name: swing-tail
+  m_EditorClassIdentifier: Assembly-CSharp::Emerge.Core.CellExperiment
+  data:
+    version: 1
+    id: swing-tail
+    title: "\u6536\u7F29\u6446\u5C3E\u5019\u9009"
+    idea: "W \u4FDD\u6301\u6838\u5FC3\u76F4\u8FDE\u7EA4\u6BDB\u63A8\u8FDB\uFF0CA
+      \u6FC0\u6D3B\u6536\u7F29\u81C2\u548C\u672B\u7AEF\u7EA4\u6BDB\uFF0C\u89C2\u5BDF\u59FF\u6001\u4E0E\u8F68\u8FF9\u3002\u5173\u95ED\u6536\u7F29\u54CD\u5E94\u53EF\u4FDD\u7559\u540C\u6837\u7EA4\u6BDB\u8F93\u5165\u4F5C\u5BF9\u7167\u3002"
+    controls: "Tab \u6E38\u52A8\uFF1BW \u76F4\u8FDE\u63A8\u8FDB\uFF0CW+A \u9A71\u52A8\u6446\u5C3E\uFF1B\u677E
+      A \u590D\u539F\u3002"
+    notes:
+    nutrients: 8
+    energy: 10
+    disableContraction: 0
+    ambient: {x: 0, y: 0}
+    cells:
+    - kind: 0
+      position: {x: -1, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 1
+      position: {x: -1, y: 0.3}
+      rotation: 180
+      contraction: 0
+    - kind: 4
+      position: {x: 0.42, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 1
+      position: {x: 1.7, y: -1}
+      rotation: 90
+      contraction: 0
+    - kind: 2
+      position: {x: -2.37, y: -1}
+      rotation: 0
+      contraction: 0
+    links:
+    - a: 0
+      b: 1
+      channel: 0
+    - a: 0
+      b: 2
+      channel: 1
+    - a: 2
+      b: 3
+      channel: 0
+    - a: 0
+      b: 4
+      channel: 0
+    food: []
+    flows: []

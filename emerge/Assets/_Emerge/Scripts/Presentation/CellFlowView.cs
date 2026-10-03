@@ -61,7 +61,7 @@ namespace Emerge.Presentation
             }
             foreach (var region in lab.Food.FlowRegions)
             {
-                if (region == null || !region.isActiveAndEnabled) continue;
+                if (region == null || !region.isActiveAndEnabled || (lab.Experiments != null && lab.Experiments.IsActive && !region.IsExperimentSource)) continue;
                 Ring(region.transform.position, region.radius * 0.4f, supply, false);
                 Ring(region.transform.position, region.radius * 0.75f, supply, false);
             }

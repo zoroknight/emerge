@@ -16,6 +16,7 @@ namespace Emerge.Editor
         [MenuItem("Emerge/Cell Lab/Create T01 Assets and Scene")]
         public static void Configure()
         {
+            ExperimentSetup.EnsureDefaults();
             Sprite circle = CreateSprite("CellCircle", 0);
             Sprite ring = CreateSprite("SelectionRing", 1);
             Sprite star = CreateSprite("CoreStar", 2);
@@ -66,6 +67,9 @@ namespace Emerge.Editor
             panelSettings.FindProperty("chineseFont").objectReferenceValue = font;
             panelSettings.ApplyModifiedPropertiesWithoutUndo();
             var settings = new SerializedObject(lab);
+            var experiments = ExperimentSetup.EnsureDefaults();
+            var experimentRefs = settings.FindProperty("experimentTemplates"); experimentRefs.arraySize = experiments.Length;
+            for (int i = 0; i < experiments.Length; i++) experimentRefs.GetArrayElementAtIndex(i).objectReferenceValue = experiments[i];
             settings.FindProperty("membrane").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Membrane.asset");
             settings.FindProperty("membranePrefab").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "Prefabs/Cells/MembraneCell.prefab").GetComponent<CellView>();
             settings.FindProperty("contractor").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CellDefinition>(Root + "Data/Cells/Contractor.asset");

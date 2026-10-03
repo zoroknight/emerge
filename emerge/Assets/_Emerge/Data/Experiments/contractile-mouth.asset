@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d140d84a65c35e4c9dc994595253194, type: 3}
+  m_Name: contractile-mouth
+  m_EditorClassIdentifier: Assembly-CSharp::Emerge.Core.CellExperiment
+  data:
+    version: 1
+    id: contractile-mouth
+    title: "\u6536\u7F29\u819C\u53E3\u5BFC\u6D41\u6444\u98DF"
+    idea: "\u4E24\u4FA7\u6536\u7F29\u7EC6\u80DE\u79FB\u52A8\u659C\u819C\uFF0C\u5C1D\u8BD5\u6539\u53D8\u5F00\u53E3\u548C\u7559\u5B58\uFF1B\u73AF\u5883\u6765\u6D41\u63D0\u4F9B\u8425\u517B\u8F93\u9001\u3002\u6CA1\u6709\u628A\u6536\u7F29\u52A8\u4F5C\u5F53\u4F5C\u6C34\u6CF5\u3002"
+    controls: "Tab\uFF1BA \u6309\u4F4F/\u677E\u5F00\u6539\u53D8\u819C\u53E3\uFF1B\u6BD4\u8F83\u5173\u95ED\u6536\u7F29\u54CD\u5E94\u53CA\u65E0\u6765\u6D41\u7248\u672C\u3002"
+    notes:
+    nutrients: 2
+    energy: 8
+    disableContraction: 0
+    ambient: {x: 0, y: 0}
+    cells:
+    - kind: 0
+      position: {x: 0, y: -2.37}
+      rotation: 0
+      contraction: 0
+    - kind: 2
+      position: {x: 0, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 4
+      position: {x: -1.35, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 4
+      position: {x: 1.35, y: -1}
+      rotation: 0
+      contraction: 0
+    - kind: 3
+      position: {x: -1.35, y: 0.48}
+      rotation: 45
+      contraction: 0
+    - kind: 3
+      position: {x: 1.35, y: 0.48}
+      rotation: -45
+      contraction: 0
+    links:
+    - a: 0
+      b: 1
+      channel: 1
+    - a: 1
+      b: 2
+      channel: 0
+    - a: 1
+      b: 3
+      channel: 0
+    - a: 2
+      b: 4
+      channel: 0
+    - a: 3
+      b: 5
+      channel: 0
+    food:
+    - position: {x: -0.8, y: 1.5}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.4, y: 1.5}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0, y: 1.5}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.4, y: 1.5}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.8, y: 1.5}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.8, y: 1.73}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.4, y: 1.73}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0, y: 1.73}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.4, y: 1.73}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.8, y: 1.73}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.8, y: 1.96}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.4, y: 1.96}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0, y: 1.96}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.4, y: 1.96}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.8, y: 1.96}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.8, y: 2.19}
+      amount: 0.4
+      captor: -1
+    - position: {x: -0.4, y: 2.19}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0, y: 2.19}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.4, y: 2.19}
+      amount: 0.4
+      captor: -1
+    - position: {x: 0.8, y: 2.19}
+      amount: 0.4
+      captor: -1
+    flows:
+    - position: {x: 0, y: -1}
+      rotation: -90
+      radius: 7
+      speed: 0.45
+      fade: 0

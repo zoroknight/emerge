@@ -10,6 +10,7 @@ namespace Emerge.World
         [Tooltip("勾选时水流由中心向边缘衰减；取消则范围内均匀流动。")]
         public bool fadeAtEdge = true;
         private NutrientWorld world;
+        public bool IsExperimentSource { get; set; }
         internal void BindWorld(NutrientWorld target) => world = target;
         public Vector2 VelocityAt(Vector2 point)
         {
